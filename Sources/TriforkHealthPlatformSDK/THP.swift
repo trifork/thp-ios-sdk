@@ -6,21 +6,25 @@ import UIKit
 /// Main entrypoint for the SDK
 public final class THP {
     
+    public static var shared: THP = THP()
+    
+    private init() { }
+    
     // MARK: - Private properties
     private static var timManager: TIMManager?
 }
 
 // MARK: - General
 
-extension THP {
-    public static func configure(configuration: THPConfiguration) {
+public extension THP {
+    static func configure(configuration: THPConfiguration) {
         timManager = TIMManager(thpConfiguration: configuration)
     }
 }
 
 // MARK: - Authentication
 
-extension THP {
+public extension THP {
     enum Auth {
         
         /// Performs OAuth login or signup with OpenID Connect by presenting a `SFSafariViewController` on the `presentingViewController`
