@@ -19,17 +19,11 @@ protocol TIMManagerProtocol {
 
 public class TIMManager {
     
-    private let timAuth: TIMAuth
-    private let timStorage: TIMDataStorage
     private let thpConfiguration: THPConfiguration
     
     public init(
-        timAuth: TIMAuth = TIM.auth,
-        timStorage: TIMDataStorage = TIM.storage,
         thpConfiguration: THPConfiguration
     ) {
-        self.timAuth = timAuth
-        self.timStorage = timStorage
         self.thpConfiguration = thpConfiguration
         configureTIM(for: .signin)
     }
@@ -39,17 +33,17 @@ public class TIMManager {
 
 extension TIMManager: TIMManagerProtocol {
     func handleRedirect(url: URL) -> Bool {
-        timAuth.handleRedirect(url: url)
+        TIM.auth.handleRedirect(url: url)
     }
     
     func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) -> AnyPublisher<JWT, THPAuthError> {
         configureTIM(for: flow)
-        return timAuth.performOpenIDConnectLogin(presentingViewController: presentingViewController)
+        return TIM.auth.performOpenIDConnectLogin(presentingViewController: presentingViewController)
             .eraseToAnyPublisher()
     }
     
     func clearAllUsers(except userId: String) {
-        timStorage.clear(userId: userId)
+        TIM.storage.clear(userId: userId)
     }
 }
 
