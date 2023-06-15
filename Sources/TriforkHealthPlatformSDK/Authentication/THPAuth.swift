@@ -24,7 +24,7 @@ public struct THPAuth {
     ///   - flow: .signin or .signup, depending on which flow you want to run
     ///   - presentingViewController: The view controller which the safari view controller should be presented on.
     /// - Returns: The userId is returned in String format.
-    func performOpenIDConnectFlow(
+    public func performOpenIDConnectFlow(
         flow: THPAuthenticationFlow,
         presentingViewController: UIViewController
     ) async throws -> String {
@@ -60,7 +60,7 @@ public struct THPAuth {
     }
     
     @discardableResult
-    func handleRedirect(url: URL) -> Bool {
+    public func handleRedirect(url: URL) -> Bool {
         guard let timManager else {
             fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
         }
