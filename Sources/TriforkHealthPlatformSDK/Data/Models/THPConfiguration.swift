@@ -9,7 +9,6 @@ import Foundation
 import TIM
 
 public struct THPConfiguration {
-    public let timAuth: TIMAuth
     public let baseAuthURL: URL
     public let scopes: [String]
     public let realm: String
@@ -18,7 +17,6 @@ public struct THPConfiguration {
     public let loginFlowKey: String
     
     public init(
-        timAuth: TIMAuth,
         scopes: [String],
         realm: String,
         clientId: String,
@@ -26,7 +24,6 @@ public struct THPConfiguration {
         baseAuthURL: URL,
         loginFlowKey: String
     ) {
-        self.timAuth = timAuth
         self.scopes = scopes
         self.realm = realm
         self.clientId = clientId
