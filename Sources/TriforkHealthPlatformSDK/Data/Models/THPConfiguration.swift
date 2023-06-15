@@ -18,7 +18,7 @@ public struct THPConfiguration {
     public let loginFlowKey: String
     
     public init(
-        timAuth: TIMAuth = TIM.auth,
+        timAuth: TIMAuth,
         scopes: [String],
         realm: String,
         clientId: String,
