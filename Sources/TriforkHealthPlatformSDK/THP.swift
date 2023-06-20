@@ -24,6 +24,7 @@ extension THP {
     public func configure(configuration: THPConfiguration) {
         timManager = TIMManagerEntity(thpConfiguration: configuration)
         _auth = THPAuthEntity(timManager: timManager!)
+        _userStorage = THPUserStorageEntity(timManager: timManager!)
     }
     
     /// Gives you access to the auth features of the SDK.
