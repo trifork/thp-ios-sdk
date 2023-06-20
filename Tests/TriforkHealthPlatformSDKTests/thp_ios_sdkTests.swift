@@ -3,6 +3,6 @@ import XCTest
 
 final class thp_ios_sdkTests: XCTestCase {
     func testExample() throws {
-//        THP.shared.auth.
+//        THP.shared.
     }
 }
