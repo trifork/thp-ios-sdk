@@ -9,26 +9,20 @@ import Combine
 import Foundation
 import UIKit
 
-public struct THPAuth {
+public struct THPAuthEntity {
     
-    private let timManager: TIMManagerProtocol?
+    private let timManager: TIMManager?
     
-    init(timManager: TIMManagerProtocol) {
+    init(timManager: TIMManager) {
         self.timManager = timManager
     }
-    
-    /// Performs OAuth login or signup with OpenID Connect by presenting a `SFSafariViewController` on the `presentingViewController`
-    ///
-    /// The `refreshToken` property will be available after this, which can be used to encrypt and store it in the secure store by the `storage` namespace.
-    /// - Parameters:
-    ///   - flow: .signin or .signup, depending on which flow you want to run
-    ///   - presentingViewController: The view controller which the safari view controller should be presented on.
-    /// - Returns: The userId is returned in String format.
+}
+
+extension THPAuthEntity: THPAuth {
     public func performOpenIDConnectFlow(
         flow: THPAuthenticationFlow,
         presentingViewController: UIViewController
     ) async throws -> String {
-        
         guard let timManager else {
             fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
         }
@@ -44,7 +38,7 @@ public struct THPAuth {
                         
                     case .finished:
                         guard let userId else {
-                            continuation.resume(throwing: THPAuthError.auth(.authStateNil))
+                            continuation.resume(throwing: THPError.auth(.authStateNil))
                             return
                         }
                         
@@ -65,5 +59,33 @@ public struct THPAuth {
             fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
         }
         return timManager.handleRedirect(url: url)
+    }
+    
+    public func getAccessToken(forceRefresh: Bool = false) async throws -> String {
+        guard let timManager else {
+            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        }
+        
+        var cancellable: AnyCancellable?
+        return try await withCheckedThrowingContinuation { continuation in
+            cancellable = timManager.accessToken(forceRefresh: forceRefresh)
+                .map(\.token)
+                .mapError { $0 }
+                .sink(
+                    receiveCompletion: { completion in
+                        if case let .failure(error) = completion {
+                            continuation.resume(throwing: error)
+                        }
+                        cancellable?.cancel()
+                    }, receiveValue: { accessToken in
+                        continuation.resume(returning: accessToken)
+                    }
+                )
+        }
+    }
+    
+    public var refreshToken: THPJWT? {
+        guard let token = timManager?.refreshToken?.token else { return nil }
+        return THPJWT(token: token)
     }
 }

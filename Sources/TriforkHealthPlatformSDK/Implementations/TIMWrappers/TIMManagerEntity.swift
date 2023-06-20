@@ -8,22 +8,14 @@
 import Combine
 import Foundation
 import TIM
+import TIMEncryptedStorage
 import UIKit
 
-protocol TIMManagerProtocol {
-    func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) -> AnyPublisher<JWT, THPAuthError>
-    @discardableResult
-    func handleRedirect(url: URL) -> Bool
-    func clearAllUsers(except userId: String)
-}
-
-public class TIMManager {
+public class TIMManagerEntity {
     
     private let thpConfiguration: THPConfiguration
     
-    public init(
-        thpConfiguration: THPConfiguration
-    ) {
+    public init(thpConfiguration: THPConfiguration) {
         self.thpConfiguration = thpConfiguration
         configureTIM(for: .signin)
     }
@@ -31,25 +23,59 @@ public class TIMManager {
 
 // MARK: - Input
 
-extension TIMManager: TIMManagerProtocol {
+extension TIMManagerEntity: TIMManager {
+    
+    // MARK: - Auth
+    
+    var refreshToken: JWT? {
+        TIM.auth.refreshToken
+    }
+    
     func handleRedirect(url: URL) -> Bool {
         TIM.auth.handleRedirect(url: url)
     }
     
-    func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) -> AnyPublisher<JWT, THPAuthError> {
+    // TODO: Give proper error back that the user can switch on
+    func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) -> AnyPublisher<JWT, THPError> {
         configureTIM(for: flow)
         return TIM.auth.performOpenIDConnectLogin(presentingViewController: presentingViewController)
+            .mapError { $0.asTHPError() }
             .eraseToAnyPublisher()
     }
     
-    func clearAllUsers(except userId: String) {
-        TIM.storage.clear(userId: userId)
+    func clearAllUsers(except userId: String?) {
+        TIM.storage.clearAllUsers(exceptUserId: userId)
+    }
+    
+    func accessToken(forceRefresh: Bool) -> AnyPublisher<JWT, THPError> {
+        TIM.auth.accessToken(forceRefresh: forceRefresh)
+            .mapError { $0.asTHPError() }
+            .eraseToAnyPublisher()
+    }
+    
+    // MARK: - Storage
+    
+    var userId: String? {
+        TIM.storage.availableUserIds.first
+    }
+    
+    func enableBiometricAccessForRefreshToken(password: String, userId: String) -> AnyPublisher<Void, THPError> {
+        TIM.storage.enableBiometricAccessForRefreshToken(password: password, userId: userId)
+            .mapError { $0.asTHPError() }
+            .eraseToAnyPublisher()
+    }
+    
+    func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) -> AnyPublisher<TIMESKeyCreationResult, THPError> {
+        let timToken = JWT(token: refreshToken.token)! // TODO: Fix forceunwrap!
+        return TIM.storage.storeRefreshToken(timToken, withNewPassword: newPassword)
+            .mapError { $0.asTHPError() }
+            .eraseToAnyPublisher()
     }
 }
 
 // MARK: - Helpers
 
-extension TIMManager {
+extension TIMManagerEntity{
     private func configureTIM(for flow: THPAuthenticationFlow) {
         TIM.configure(
             configuration: buildConfiguration(
