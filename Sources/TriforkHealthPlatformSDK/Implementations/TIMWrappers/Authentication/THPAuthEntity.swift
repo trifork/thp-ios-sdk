@@ -62,6 +62,58 @@ extension THPAuthEntity: THPAuth {
         return timManager.handleRedirect(url: url)
     }
     
+    public func loginWithBiometricId(storeNewRefreshToken: Bool) async throws -> THPJWT {
+        guard let timManager else {
+            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        }
+        
+        guard let userId = timManager.userId else {
+            fatalError("userId is missing!")
+        }
+        
+        var cancellable: AnyCancellable?
+        return try await withCheckedThrowingContinuation { continuation in
+            cancellable = timManager.loginWithBiometricId(userId: userId, storeNewRefreshToken: storeNewRefreshToken)
+                .mapError { $0 }
+                .sink(
+                    receiveCompletion: { completion in
+                        if case let .failure(error) = completion {
+                            continuation.resume(throwing: error)
+                        }
+                        cancellable?.cancel()
+                    }, receiveValue: { accessToken in
+                        continuation.resume(returning: THPJWT(token: accessToken.token)!)
+                    }
+                )
+        }
+    }
+    
+    public func loginWithPassword(password: String, storeNewRefreshToken: Bool) async throws -> THPJWT {
+        guard let timManager else {
+            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        }
+        
+        guard let userId = timManager.userId else {
+            fatalError("userId is missing!")
+        }
+        
+        var cancellable: AnyCancellable?
+        return try await withCheckedThrowingContinuation { continuation in
+            cancellable = timManager.loginWithPassword(userId: userId, password: password, storeNewRefreshToken: storeNewRefreshToken)
+                .mapError { $0 }
+                .sink(
+                    receiveCompletion: { completion in
+                        if case let .failure(error) = completion {
+                            continuation.resume(throwing: error)
+                        }
+                        cancellable?.cancel()
+                    }, receiveValue: { accessToken in
+                        continuation.resume(returning: THPJWT(token: accessToken.token)!)
+                    }
+                )
+        }
+    }
+    
     public func getAccessToken(forceRefresh: Bool = false) async throws -> THPJWT {
         guard let timManager else {
             fatalError("You have to call the `configure(configuration:)` method before using \(#function)")

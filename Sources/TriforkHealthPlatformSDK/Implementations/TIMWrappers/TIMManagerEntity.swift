@@ -35,14 +35,26 @@ extension TIMManagerEntity: TIMManager {
         TIM.auth.isLoggedIn
     }
     
-    func handleRedirect(url: URL) -> Bool {
-        TIM.auth.handleRedirect(url: url)
-    }
-    
     // TODO: Give proper error back that the user can switch on
     func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) -> AnyPublisher<JWT, THPError> {
         configureTIM(for: flow)
         return TIM.auth.performOpenIDConnectLogin(presentingViewController: presentingViewController)
+            .mapError { $0.asTHPError() }
+            .eraseToAnyPublisher()
+    }
+    
+    func handleRedirect(url: URL) -> Bool {
+        TIM.auth.handleRedirect(url: url)
+    }
+    
+    func loginWithBiometricId(userId: String, storeNewRefreshToken: Bool) -> AnyPublisher<JWT, THPError> {
+        TIM.auth.loginWithBiometricId(userId: userId, storeNewRefreshToken: storeNewRefreshToken, willBeginNetworkRequests: nil)
+            .mapError { $0.asTHPError() }
+            .eraseToAnyPublisher()
+    }
+    
+    func loginWithPassword(userId: String, password: String, storeNewRefreshToken: Bool) -> AnyPublisher<JWT, THPError> {
+        TIM.auth.loginWithPassword(userId: userId, password: password, storeNewRefreshToken: storeNewRefreshToken)
             .mapError { $0.asTHPError() }
             .eraseToAnyPublisher()
     }

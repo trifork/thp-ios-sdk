@@ -18,6 +18,8 @@ protocol TIMManager {
     func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) -> AnyPublisher<JWT, THPError>
     @discardableResult
     func handleRedirect(url: URL) -> Bool
+    func loginWithBiometricId(userId: String, storeNewRefreshToken: Bool) -> AnyPublisher<JWT, THPError>
+    func loginWithPassword(userId: String, password: String, storeNewRefreshToken: Bool) -> AnyPublisher<JWT, THPError>
     func clearAllUsers(except userId: String?)
     func accessToken(forceRefresh: Bool) -> AnyPublisher<JWT, THPError>
     func getStoredRefreshToken(userId: String, password: String) -> AnyPublisher<JWT, THPError>

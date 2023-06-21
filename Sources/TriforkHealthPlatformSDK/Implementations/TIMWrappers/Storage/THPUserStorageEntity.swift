@@ -57,7 +57,7 @@ extension THPUserStorageEntity: THPUserStorage {
         }
         
         guard let userId else {
-            fatalError("You must have a logged in user to enable Biometrics")
+            fatalError("You must have a logged in user to call \(#function)")
         }
         return timManager.hasBiometricAccessForRefreshToken(userId: userId)
     }
@@ -68,7 +68,7 @@ extension THPUserStorageEntity: THPUserStorage {
         }
         
         guard let userId else {
-            fatalError("You must have a logged in user to enable Biometrics")
+            fatalError("You must have a logged in user to disable Biometrics")
         }
         timManager.disableBiometricAccessForRefreshToken(userId: userId)
     }

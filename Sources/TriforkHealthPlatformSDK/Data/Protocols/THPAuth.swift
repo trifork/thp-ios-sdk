@@ -23,16 +23,27 @@ public protocol THPAuth {
     @discardableResult
     func handleRedirect(url: URL) -> Bool
     
-    /// Gets the current access token (JWT) from the current session if available.
-    /// This will automatically renew the access token if necessary (by using the refresh token)
-    /// - Parameter forceRefresh: Force refresh an access token
-    func getAccessToken(forceRefresh: Bool) async throws -> THPJWT
-    
     /// Gets a stored refresh token for a `userId` and a `password`
     /// - Parameters:
     ///   - userId: The `userId` from the refresh token
     ///   - password: The password that was used to store it.
     func getStoredRefreshToken(for userId: String, with password: String) async throws -> THPJWT
+    
+    /// Logs in using biometric login. This can only be done if the user has stored the refresh token with a password after calling `performOpenIDConnectLogin` AND enabled biometric protection for it.
+    /// - Parameters:
+    ///   - storeNewRefreshToken: `true` if it should store the new refresh token, and `false` if not. Most people will need this as `true`
+    func loginWithBiometricId(storeNewRefreshToken: Bool) async throws -> THPJWT
+    
+    /// Gets the current access token (JWT) from the current session if available.
+    /// This will automatically renew the access token if necessary (by using the refresh token)
+    /// - Parameter forceRefresh: Force refresh an access token
+    func getAccessToken(forceRefresh: Bool) async throws -> THPJWT
+    
+    /// Logs in using password. This can only be done if the user has stored the refresh token with a password after calling `performOpenIDConnectLogin`.
+    /// - Parameters:
+    ///   - password: The password that was used when the refresh token was stored.
+    ///   - storeNewRefreshToken: `true` if it should store the new refresh token, and `false` if not. Most people will need this as `true`
+    func loginWithPassword(password: String, storeNewRefreshToken: Bool) async throws -> THPJWT
     
     /// Logs out the user of the current session, clearing the auth state with active tokens
     /// - Parameter clearUser: Clears all securely stored data
