@@ -16,12 +16,16 @@ public protocol THPUserStorage {
     /// - Parameters:
     ///   - password: The password that was used to store the refresh token.
     ///   - userId: The `userId` for the refresh token.
-    func enableBiometricAccessForRefreshToken(password: String, userId: String) async throws -> Void
+    func enableBiometricAccessForRefreshToken(password: String) async throws -> Void
     
+    /// Checks whether the logged in user has stored a refresh token with biometric protection access.
+    func hasBiometricAccessEnabled() -> Bool
     
-    /// Clears all stored users
-    /// - Parameter exceptUserId: Optional `userId` of the only user you don't want to clear, if any
-    func clearAllUsers(exceptUserId: String?)
+    /// Disables biometric protection access for refresh token.
+    func disableBiometricAccess()
+    
+    ///  Clears all securely stored data for the logged in user
+    func clearUser()
     
     /// Stores refresh token with a new password and removes current biometric access for potential previous refresh token.
     /// - Parameters:

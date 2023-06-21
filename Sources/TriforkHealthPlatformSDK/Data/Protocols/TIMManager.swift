@@ -27,6 +27,8 @@ protocol TIMManager {
     
     var userId: String? { get }
     func enableBiometricAccessForRefreshToken(password: String, userId: String) -> AnyPublisher<Void, THPError>
+    func hasBiometricAccessForRefreshToken(userId: String) -> Bool
+    func disableBiometricAccessForRefreshToken(userId: String)
     func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) -> AnyPublisher<TIMESKeyCreationResult, THPError>
     
     // MARK: - Mixed (for SDK simplicity)

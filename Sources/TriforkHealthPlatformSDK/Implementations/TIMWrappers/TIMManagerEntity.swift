@@ -69,6 +69,14 @@ extension TIMManagerEntity: TIMManager {
             .eraseToAnyPublisher()
     }
     
+    func hasBiometricAccessForRefreshToken(userId: String) -> Bool {
+        TIM.storage.hasBiometricAccessForRefreshToken(userId: userId)
+    }
+    
+    func disableBiometricAccessForRefreshToken(userId: String) {
+        TIM.storage.disableBiometricAccessForRefreshToken(userId: userId)
+    }
+    
     func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) -> AnyPublisher<TIMESKeyCreationResult, THPError> {
         let timToken = JWT(token: refreshToken.token)! // TODO: Fix forceunwrap!
         return TIM.storage.storeRefreshToken(timToken, withNewPassword: newPassword)

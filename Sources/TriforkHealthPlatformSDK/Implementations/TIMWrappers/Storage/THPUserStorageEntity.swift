@@ -26,9 +26,13 @@ extension THPUserStorageEntity: THPUserStorage {
         return timManager.userId
     }
     
-    public func enableBiometricAccessForRefreshToken(password: String, userId: String) async throws -> Void {
+    public func enableBiometricAccessForRefreshToken(password: String) async throws -> Void {
         guard let timManager else {
             fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        }
+        
+        guard let userId else {
+            fatalError("You must have a logged in user to enable Biometrics")
         }
         
         var cancellable: AnyCancellable?
@@ -47,8 +51,30 @@ extension THPUserStorageEntity: THPUserStorage {
         }
     }
     
-    public func clearAllUsers(exceptUserId: String? = nil) {
-        timManager?.clearAllUsers(except: exceptUserId)
+    public func hasBiometricAccessEnabled() -> Bool {
+        guard let timManager else {
+            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        }
+        
+        guard let userId else {
+            fatalError("You must have a logged in user to enable Biometrics")
+        }
+        return timManager.hasBiometricAccessForRefreshToken(userId: userId)
+    }
+    
+    public func disableBiometricAccess() {
+        guard let timManager else {
+            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        }
+        
+        guard let userId else {
+            fatalError("You must have a logged in user to enable Biometrics")
+        }
+        timManager.disableBiometricAccessForRefreshToken(userId: userId)
+    }
+    
+    public func clearUser() {
+        timManager?.clearAllUsers(except: nil)
     }
     
     public func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) async throws -> Void {
