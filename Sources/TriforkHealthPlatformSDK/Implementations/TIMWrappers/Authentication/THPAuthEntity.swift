@@ -136,27 +136,6 @@ extension THPAuthEntity: THPAuth {
         }
     }
     
-    public func getStoredRefreshToken(for userId: String, with password: String) async throws -> THPJWT {
-        guard let timManager else {
-            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
-        }
-        
-        var cancellable: AnyCancellable?
-        return try await withCheckedThrowingContinuation { continuation in
-            cancellable = timManager.getStoredRefreshToken(userId: userId, password: password)
-                .sink(
-                    receiveCompletion: { completion in
-                        if case let .failure(error) = completion {
-                            continuation.resume(throwing: error)
-                        }
-                        cancellable?.cancel()
-                    }, receiveValue: { accessToken in
-                        continuation.resume(returning: THPJWT(token: accessToken.token)!)
-                    }
-                )
-        }
-    }
-    
     public var refreshToken: THPJWT? {
         guard let timManager else {
             fatalError("You have to call the `configure(configuration:)` method before using \(#function)")

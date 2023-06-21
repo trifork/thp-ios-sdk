@@ -23,12 +23,6 @@ public protocol THPAuth {
     @discardableResult
     func handleRedirect(url: URL) -> Bool
     
-    /// Gets a stored refresh token for a `userId` and a `password`
-    /// - Parameters:
-    ///   - userId: The `userId` from the refresh token
-    ///   - password: The password that was used to store it.
-    func getStoredRefreshToken(for userId: String, with password: String) async throws -> THPJWT
-    
     /// Logs in using biometric login. This can only be done if the user has stored the refresh token with a password after calling `performOpenIDConnectLogin` AND enabled biometric protection for it.
     /// - Parameters:
     ///   - storeNewRefreshToken: `true` if it should store the new refresh token, and `false` if not. Most people will need this as `true`

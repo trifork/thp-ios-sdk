@@ -32,4 +32,10 @@ public protocol THPUserStorage {
     ///   - refreshToken: The refresh token.
     ///   - newPassword: The new password that needs a new encryption key.
     func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) async throws -> Void
+    
+    /// Gets a stored refresh token for a `userId` and a `password`
+    /// - Parameters:
+    ///   - userId: The `userId` from the refresh token
+    ///   - password: The password that was used to store it.
+    func getStoredRefreshToken(for userId: String, with password: String) async throws -> THPJWT
 }
