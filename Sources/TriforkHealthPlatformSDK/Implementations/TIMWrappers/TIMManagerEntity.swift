@@ -57,6 +57,12 @@ extension TIMManagerEntity: TIMManager {
             .eraseToAnyPublisher()
     }
     
+    func getStoredRefreshToken(userId: String, password: String) -> AnyPublisher<JWT, THPError> {
+        TIM.storage.getStoredRefreshToken(userId: userId, password: password)
+            .mapError { $0.asTHPError() }
+            .eraseToAnyPublisher()
+    }
+    
     // MARK: - Storage
     
     var userId: String? {

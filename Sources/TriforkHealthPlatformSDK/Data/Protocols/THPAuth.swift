@@ -28,6 +28,12 @@ public protocol THPAuth {
     /// - Parameter forceRefresh: Force refresh an access token
     func getAccessToken(forceRefresh: Bool) async throws -> THPJWT
     
+    /// Gets a stored refresh token for a `userId` and a `password`
+    /// - Parameters:
+    ///   - userId: The `userId` from the refresh token
+    ///   - password: The password that was used to store it.
+    func getStoredRefreshToken(for userId: String, with password: String) async throws -> THPJWT
+    
     /// Logs out the user of the current session, clearing the auth state with active tokens
     /// - Parameter clearUser: Clears all securely stored data
     func logout(clearUser: Bool)
