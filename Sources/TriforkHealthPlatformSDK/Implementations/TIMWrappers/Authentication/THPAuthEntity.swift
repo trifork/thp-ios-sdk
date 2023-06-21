@@ -19,6 +19,7 @@ public struct THPAuthEntity {
 }
 
 extension THPAuthEntity: THPAuth {
+    
     public func performOpenIDConnectFlow(
         flow: THPAuthenticationFlow,
         presentingViewController: UIViewController
@@ -61,7 +62,7 @@ extension THPAuthEntity: THPAuth {
         return timManager.handleRedirect(url: url)
     }
     
-    public func getAccessToken(forceRefresh: Bool = false) async throws -> String {
+    public func getAccessToken(forceRefresh: Bool = false) async throws -> THPJWT {
         guard let timManager else {
             fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
         }
@@ -69,7 +70,6 @@ extension THPAuthEntity: THPAuth {
         var cancellable: AnyCancellable?
         return try await withCheckedThrowingContinuation { continuation in
             cancellable = timManager.accessToken(forceRefresh: forceRefresh)
-                .map(\.token)
                 .mapError { $0 }
                 .sink(
                     receiveCompletion: { completion in
@@ -78,14 +78,31 @@ extension THPAuthEntity: THPAuth {
                         }
                         cancellable?.cancel()
                     }, receiveValue: { accessToken in
-                        continuation.resume(returning: accessToken)
+                        continuation.resume(returning: THPJWT(token: accessToken.token)!)
                     }
                 )
         }
     }
     
     public var refreshToken: THPJWT? {
-        guard let token = timManager?.refreshToken?.token else { return nil }
+        guard let timManager else {
+            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        }
+        guard let token = timManager.refreshToken?.token else { return nil }
         return THPJWT(token: token)
+    }
+    
+    public func logout(clearUser: Bool) {
+        guard let timManager else {
+            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        }
+        timManager.logout(clearUser: clearUser)
+    }
+    
+    public var isLoggedIn: Bool {
+        guard let timManager else {
+            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        }
+        return timManager.isLoggedIn
     }
 }

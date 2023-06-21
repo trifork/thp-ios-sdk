@@ -21,10 +21,15 @@ protocol TIMManager {
     func clearAllUsers(except userId: String?)
     func accessToken(forceRefresh: Bool) -> AnyPublisher<JWT, THPError>
     var refreshToken: JWT? { get }
+    var isLoggedIn: Bool { get }
     
     // MARK: - Storage
     
     var userId: String? { get }
     func enableBiometricAccessForRefreshToken(password: String, userId: String) -> AnyPublisher<Void, THPError>
     func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) -> AnyPublisher<TIMESKeyCreationResult, THPError>
+    
+    // MARK: - Mixed (for SDK simplicity)
+    
+    func logout(clearUser: Bool)
 }

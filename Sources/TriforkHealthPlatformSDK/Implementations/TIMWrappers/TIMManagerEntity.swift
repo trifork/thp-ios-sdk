@@ -31,6 +31,10 @@ extension TIMManagerEntity: TIMManager {
         TIM.auth.refreshToken
     }
     
+    var isLoggedIn: Bool {
+        TIM.auth.isLoggedIn
+    }
+    
     func handleRedirect(url: URL) -> Bool {
         TIM.auth.handleRedirect(url: url)
     }
@@ -70,6 +74,15 @@ extension TIMManagerEntity: TIMManager {
         return TIM.storage.storeRefreshToken(timToken, withNewPassword: newPassword)
             .mapError { $0.asTHPError() }
             .eraseToAnyPublisher()
+    }
+    
+    // MARK: - Mixed (for SDK simplicity)
+    
+    func logout(clearUser: Bool) {
+        TIM.auth.logout()
+        if clearUser {
+            self.clearAllUsers(except: nil)
+        }
     }
 }
 

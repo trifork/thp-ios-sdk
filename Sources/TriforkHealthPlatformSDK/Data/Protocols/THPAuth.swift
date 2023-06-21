@@ -23,12 +23,18 @@ public protocol THPAuth {
     @discardableResult
     func handleRedirect(url: URL) -> Bool
     
-    /// Gets the current access token from the current session if available.
+    /// Gets the current access token (JWT) from the current session if available.
     /// This will automatically renew the access token if necessary (by using the refresh token)
     /// - Parameter forceRefresh: Force refresh an access token
-    func getAccessToken(forceRefresh: Bool) async throws -> String
+    func getAccessToken(forceRefresh: Bool) async throws -> THPJWT
     
-    /// Gets the refresh token from the current session if available
+    /// Logs out the user of the current session, clearing the auth state with active tokens
+    /// - Parameter clearUser: Clears all securely stored data
+    func logout(clearUser: Bool)
+    
+    /// Gets the refresh token (JWT) from the current session if available
     var refreshToken: THPJWT? { get }
     
+    /// Indicates whether the user as a valid auth state
+    var isLoggedIn: Bool { get }
 }

@@ -44,4 +44,13 @@ extension THP {
             fatalError("You have to call the `configure(configuration:)` method before using `\(#function)`")
         }
     }
+    
+//    /// Gives you access to medical data for the logged in user
+//    public var data: THPData {
+//        if let dataInstance = _data {
+//            return dataInstance
+//        } else {
+//            fatalError("You have to call the `configure(configuration:)` method before using `\(#function)`")
+//        }
+//    }
 }
