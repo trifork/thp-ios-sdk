@@ -7,9 +7,11 @@
 
 import Foundation
 import TIM
+import TIMEncryptedStorage
 
 public typealias THPAuthError = TIMAuthError
 public typealias THPStorageError = TIMStorageError
+public typealias THPEncryptedStorageError = TIMEncryptedStorageError
 
 extension TIMError {
     func asTHPError() -> THPError {
