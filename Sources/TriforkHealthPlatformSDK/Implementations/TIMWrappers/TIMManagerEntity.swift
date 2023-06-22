@@ -35,7 +35,6 @@ extension TIMManagerEntity: TIMManager {
         TIM.auth.isLoggedIn
     }
     
-    // TODO: Give proper error back that the user can switch on
     func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) -> AnyPublisher<JWT, THPError> {
         configureTIM(for: flow)
         return TIM.auth.performOpenIDConnectLogin(presentingViewController: presentingViewController)

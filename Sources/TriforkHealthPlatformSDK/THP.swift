@@ -54,3 +54,9 @@ extension THP {
 //        }
 //    }
 }
+
+
+// TODO: Tasks that needs to be done
+// - Add documentation for the THPConfiguration file
+// - Add documentation in Github Readme, on how to use the SDK for logging in/signing up.
+// - Set up Apollo to prepare for handling data, when BFF is ready to deliver data instaed of view components
