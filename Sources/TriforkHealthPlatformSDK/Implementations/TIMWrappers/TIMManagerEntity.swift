@@ -5,6 +5,7 @@
 //  Created by Nicolai Harbo on 15/06/2023.
 //
 
+import AppAuth
 import Combine
 import Foundation
 import TIM
@@ -14,9 +15,14 @@ import UIKit
 public class TIMManagerEntity {
     
     private let thpConfiguration: THPConfiguration
+    private let customOIDExternalUserAgent: OIDExternalUserAgent?
     
-    public init(thpConfiguration: THPConfiguration) {
+    public init(
+        thpConfiguration: THPConfiguration,
+        customOIDExternalUserAgent: OIDExternalUserAgent?
+    ) {
         self.thpConfiguration = thpConfiguration
+        self.customOIDExternalUserAgent = customOIDExternalUserAgent
         configureTIM(for: .signin)
     }
 }
@@ -124,7 +130,8 @@ extension TIMManagerEntity{
                 redirectURL: thpConfiguration.redirectUrl,
                 flow: flow
             ),
-            allowReconfigure: true
+            allowReconfigure: true,
+            customOIDExternalUserAgent: customOIDExternalUserAgent
         )
     }
     
