@@ -1,3 +1,4 @@
+import AppAuth
 
 /// Main entrypoint for the SDK
 public final class THP {
@@ -21,8 +22,15 @@ extension THP {
     /// The configuration needs to be called before any other functionalities can be used
     /// You should only call this function once.
     /// - Parameter configuration: The actual configuration
-    public func configure(configuration: THPConfiguration) {
-        timManager = TIMManagerEntity(thpConfiguration: configuration)
+    /// - Parameter customOIDExternalUserAgent: The actual configuration
+    public func configure(
+        configuration: THPConfiguration,
+        customOIDExternalUserAgent: OIDExternalUserAgent? = nil
+    ) {
+        timManager = TIMManagerEntity(
+            thpConfiguration: configuration,
+            customOIDExternalUserAgent: customOIDExternalUserAgent
+        )
         _auth = THPAuthEntity(timManager: timManager!)
         _userStorage = THPUserStorageEntity(timManager: timManager!)
     }
