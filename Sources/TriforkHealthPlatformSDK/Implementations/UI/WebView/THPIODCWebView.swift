@@ -33,6 +33,6 @@ public struct THPIODCWebView: View {
                 }
             }
         }
-        .edgesIgnoringSafeArea(.all)
+//        .edgesIgnoringSafeArea(.all)
     }
 }

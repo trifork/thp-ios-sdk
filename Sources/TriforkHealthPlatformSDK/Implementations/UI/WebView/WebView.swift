@@ -28,7 +28,7 @@ struct WebView: UIViewRepresentable {
         let webView = WKWebView(frame: CGRect.zero, configuration: configuration)
         webView.uiDelegate = context.coordinator
         webView.navigationDelegate = context.coordinator
-//        webView.allowsBackForwardNavigationGestures = true
+        //        webView.allowsBackForwardNavigationGestures = true
         webView.scrollView.isScrollEnabled = true
         
         // Clear all cookies, just for good measure's sake
@@ -75,6 +75,23 @@ struct WebView: UIViewRepresentable {
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
             parent.isLoading = false
             parent.error = error
+        }
+        
+        func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
+            if let url = webView.url {
+                UIApplication.shared.open(url, options: [:])
+            }
+        }
+        
+        func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+            if challenge.previousFailureCount > 0 {
+                completionHandler(Foundation.URLSession.AuthChallengeDisposition.cancelAuthenticationChallenge, nil)
+            } else if let serverTrust = challenge.protectionSpace.serverTrust {
+                completionHandler(Foundation.URLSession.AuthChallengeDisposition.useCredential, URLCredential(trust: serverTrust))
+            } else {
+                print("unknown state. error: \(challenge.error)")
+                // do something w/ completionHandler here
+            }
         }
         
         // MARK: - WKUIDelegate
