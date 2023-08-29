@@ -49,7 +49,8 @@ struct WebView: UIViewRepresentable {
     // MARK: - Coordinator
     class Coordinator : NSObject, WKNavigationDelegate, WKUIDelegate {
         
-        var parent: WebView
+        private var parent: WebView
+        private var ignoreError: Bool = false
         
         init(_ parent: WebView) {
             self.parent = parent
@@ -62,6 +63,7 @@ struct WebView: UIViewRepresentable {
             decidePolicyFor navigationAction: WKNavigationAction,
             decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
         ) {
+            ignoreError = false
             decisionHandler(.allow)
         }
         
@@ -74,15 +76,18 @@ struct WebView: UIViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
-            parent.isLoading = false
-            parent.error = error
+            if !ignoreError {
+                parent.isLoading = false
+                parent.error = error
+            }
         }
         
         func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
             if let url = webView.url, let configuration = THP.shared.configuration, url.absoluteString.starts(with: configuration.redirectUrl) {
-                parent.error = nil
                 parent.isLoading = true
                 THP.shared.auth.handleRedirect(url: url)
+                ignoreError = true
+                
                 // Close the view
                 parent.isPresented = false
             }
