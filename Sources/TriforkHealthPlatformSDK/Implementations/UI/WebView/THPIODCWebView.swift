@@ -12,9 +12,14 @@ public struct THPIODCWebView: View {
     public let urlRequest: URLRequest
     @State private var isLoading = true
     @State private var error: Error? = nil
+    @Binding var isPresented: Bool
     
-    public init(urlRequest: URLRequest) {
+    public init(
+        urlRequest: URLRequest,
+        isPresented: Binding<Bool>
+    ) {
         self.urlRequest = urlRequest
+        self._isPresented = isPresented
     }
     
     public var body: some View {
@@ -25,7 +30,8 @@ public struct THPIODCWebView: View {
                 WebView(
                     urlRequest: urlRequest,
                     isLoading: $isLoading,
-                    error: $error
+                    error: $error,
+                    isPresented: $isPresented
                 )
                 
                 if isLoading {
@@ -33,6 +39,5 @@ public struct THPIODCWebView: View {
                 }
             }
         }
-//        .edgesIgnoringSafeArea(.all)
     }
 }

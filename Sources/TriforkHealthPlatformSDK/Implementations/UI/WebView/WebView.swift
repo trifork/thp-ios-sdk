@@ -13,6 +13,7 @@ struct WebView: UIViewRepresentable {
     let urlRequest: URLRequest
     @Binding var isLoading: Bool
     @Binding var error: Error?
+    @Binding var isPresented: Bool
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -79,18 +80,9 @@ struct WebView: UIViewRepresentable {
         
         func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
             if let url = webView.url, let configuration = THP.shared.configuration, url.absoluteString.starts(with: configuration.redirectUrl) {
-                UIApplication.shared.open(url, options: [:])
-            }
-        }
-        
-        func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-            if challenge.previousFailureCount > 0 {
-                completionHandler(Foundation.URLSession.AuthChallengeDisposition.cancelAuthenticationChallenge, nil)
-            } else if let serverTrust = challenge.protectionSpace.serverTrust {
-                completionHandler(Foundation.URLSession.AuthChallengeDisposition.useCredential, URLCredential(trust: serverTrust))
-            } else {
-                print("unknown state. error: \(challenge.error)")
-                // do something w/ completionHandler here
+                THP.shared.auth.handleRedirect(url: url)
+                // Close the view
+                parent.isPresented = false
             }
         }
         
