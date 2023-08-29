@@ -80,6 +80,8 @@ struct WebView: UIViewRepresentable {
         
         func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
             if let url = webView.url, let configuration = THP.shared.configuration, url.absoluteString.starts(with: configuration.redirectUrl) {
+                parent.error = nil
+                parent.isLoading = true
                 THP.shared.auth.handleRedirect(url: url)
                 // Close the view
                 parent.isPresented = false
