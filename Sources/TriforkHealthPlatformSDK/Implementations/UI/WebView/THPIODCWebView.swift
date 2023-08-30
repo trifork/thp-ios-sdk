@@ -9,16 +9,20 @@ import SwiftUI
 
 public struct THPIODCWebView: View {
     
-    public let urlRequest: URLRequest
     @State private var isLoading = true
     @State private var error: Error? = nil
-    @Binding var isPresented: Bool
+    
+    private let urlRequest: URLRequest
+    private let loadingOverlayColor: Color
+    @Binding private var isPresented: Bool?
     
     public init(
         urlRequest: URLRequest,
-        isPresented: Binding<Bool>
+        loadingOverlayColor: Color = .white,
+        isPresented: Binding<Bool?> = .constant(nil)
     ) {
         self.urlRequest = urlRequest
+        self.loadingOverlayColor = loadingOverlayColor
         self._isPresented = isPresented
     }
     
@@ -35,9 +39,10 @@ public struct THPIODCWebView: View {
                 )
                 
                 if isLoading {
-                    ProgressView()
+                    loadingOverlayColor.overlay(ProgressView())
                 }
             }
         }
+        .edgesIgnoringSafeArea(.all)
     }
 }

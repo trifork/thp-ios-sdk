@@ -13,7 +13,7 @@ struct WebView: UIViewRepresentable {
     let urlRequest: URLRequest
     @Binding var isLoading: Bool
     @Binding var error: Error?
-    @Binding var isPresented: Bool
+    @Binding var isPresented: Bool?
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -29,7 +29,6 @@ struct WebView: UIViewRepresentable {
         let webView = WKWebView(frame: CGRect.zero, configuration: configuration)
         webView.uiDelegate = context.coordinator
         webView.navigationDelegate = context.coordinator
-        //        webView.allowsBackForwardNavigationGestures = true
         webView.scrollView.isScrollEnabled = true
         
         // Clear all cookies, just for good measure's sake
@@ -68,25 +67,41 @@ struct WebView: UIViewRepresentable {
         }
         
         func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-            parent.isLoading = true
+            withAnimation {
+                parent.isLoading = true
+            }
         }
         
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            parent.isLoading = false
+            withAnimation {
+                parent.isLoading = false
+            }
         }
         
         func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
             if !ignoreError {
-                parent.isLoading = false
-                parent.error = error
+                withAnimation {
+                    parent.isLoading = false
+                    parent.error = error
+                }
             }
         }
         
         func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
             if let url = webView.url, let configuration = THP.shared.configuration, url.absoluteString.starts(with: configuration.redirectUrl) {
-                parent.isLoading = true
+                withAnimation {
+                    parent.isLoading = true
+                }
+                
                 THP.shared.auth.handleRedirect(url: url)
                 ignoreError = true
+                
+                // handleRedirect(url:) loads in the background - might be nice for the UI to know, in some cases.
+                NotificationCenter.default.post(
+                    name: .thpOIDCLoadingTokenNotification,
+                    object: nil,
+                    userInfo: nil
+                )
                 
                 // Close the view
                 parent.isPresented = false

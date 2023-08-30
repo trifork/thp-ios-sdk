@@ -19,7 +19,7 @@ public class THPOIDExternalUserAgent: OIDExternalUserAgentIOS {
             return false
         }
         NotificationCenter.default.post(
-            name: .thpOidcPresentationNotification,
+            name: .thpOIDCPresentationNotification,
             object: nil,
             userInfo: [THPNotificationKey.oidcUrl: url]
         )
