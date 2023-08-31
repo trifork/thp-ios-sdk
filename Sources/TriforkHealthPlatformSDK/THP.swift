@@ -13,6 +13,7 @@ public final class THP {
     private var timManager: TIMManager?
     private var _auth: THPAuth?
     private var _userStorage: THPUserStorage?
+    private var _configuration: THPConfiguration?
 }
 
 // MARK: - Input
@@ -33,6 +34,7 @@ extension THP {
         )
         _auth = THPAuthEntity(timManager: timManager!)
         _userStorage = THPUserStorageEntity(timManager: timManager!)
+        _configuration = configuration
     }
     
     /// Gives you access to the auth features of the SDK.
@@ -51,6 +53,11 @@ extension THP {
         } else {
             fatalError("You have to call the `configure(configuration:)` method before using `\(#function)`")
         }
+    }
+    
+    /// Allows you to read the configuration
+    public var configuration: THPConfiguration? {
+        return _configuration
     }
     
 //    /// Gives you access to medical data for the logged in user

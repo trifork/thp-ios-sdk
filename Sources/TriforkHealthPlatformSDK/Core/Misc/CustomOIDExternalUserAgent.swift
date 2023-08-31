@@ -8,13 +8,18 @@
 import AppAuth
 import WebKit
 
-class THPOIDExternalUserAgent: OIDExternalUserAgentIOS {
+public class THPOIDExternalUserAgent: OIDExternalUserAgentIOS {
+    
+    public init?() {
+        super.init(presenting: UIViewController())
+    }
+    
     public override func present(_ request: OIDExternalUserAgentRequest, session: OIDExternalUserAgentSession) -> Bool {
         guard let url = request.externalUserAgentRequestURL() else {
             return false
         }
         NotificationCenter.default.post(
-            name: .thpOidcPresentationNotification,
+            name: .thpOIDCPresentationNotification,
             object: nil,
             userInfo: [THPNotificationKey.oidcUrl: url]
         )

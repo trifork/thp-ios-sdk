@@ -54,6 +54,37 @@ extension THPAuthEntity: THPAuth {
         }
     }
     
+    public func performOpenIDConnectFlow(flow: THPAuthenticationFlow) async throws -> String {
+        guard let timManager else {
+            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        }
+        var cancellable: AnyCancellable?
+        var userId: String?
+
+        return try await withCheckedThrowingContinuation { continuation in
+            cancellable = timManager.performOpenIDConnectFlow(flow: flow)
+                .sink { completion in
+                    switch completion {
+                    case .failure(let error):
+                        continuation.resume(throwing: error)
+
+                    case .finished:
+                        guard let userId else {
+                            continuation.resume(throwing: THPError.auth(.authStateNil))
+                            return
+                        }
+
+                        // New login succeeded. Since we only support one user login we will clear all other ids on this device.
+                        timManager.clearAllUsers(except: userId)
+                        continuation.resume(returning: userId)
+                    }
+                    cancellable?.cancel()
+                } receiveValue: { accessToken in
+                    userId = accessToken.userId
+                }
+        }
+    }
+    
     @discardableResult
     public func handleRedirect(url: URL) -> Bool {
         guard let timManager else {

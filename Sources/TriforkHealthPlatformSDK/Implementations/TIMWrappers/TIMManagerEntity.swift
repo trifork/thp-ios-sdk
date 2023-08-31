@@ -48,6 +48,13 @@ extension TIMManagerEntity: TIMManager {
             .eraseToAnyPublisher()
     }
     
+    func performOpenIDConnectFlow(flow: THPAuthenticationFlow) -> AnyPublisher<JWT, THPError> {
+        configureTIM(for: flow)
+        return TIM.auth.performOpenIDConnectLogin()
+            .mapError { $0.asTHPError() }
+            .eraseToAnyPublisher()
+    }
+    
     func handleRedirect(url: URL) -> Bool {
         TIM.auth.handleRedirect(url: url)
     }

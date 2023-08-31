@@ -18,6 +18,14 @@ public protocol THPAuth {
     /// - Returns: The userId is returned in String format.
     func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) async throws -> String
     
+    /// Performs OAuth login or signup with OpenID Connect. The url will be prepared and returned in a NSNotification, for you to present in a custom view.
+    ///
+    /// The `refreshToken` property will be available after this, which can be used to encrypt and store it in the secure store by the `storage` namespace.
+    /// - Parameters:
+    ///   - flow: .signin or .signup, depending on which flow you want to run
+    /// - Returns: The userId is returned in String format.
+    func performOpenIDConnectFlow(flow: THPAuthenticationFlow) async throws -> String
+    
     /// Handles redirect from the `SFSafariViewController`. The return value determines whether the URL was handled successfully.
     /// - Parameter url: The url that was directed to the app.
     @discardableResult
