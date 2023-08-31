@@ -7,12 +7,15 @@
 
 import SwiftUI
 
-struct THPIODCSafariWebView: View {
+public struct THPIODCSafariWebView: View {
     
     let url: URL
-    @Binding private var isPresented: Bool?
+
+    public init(url: URL) {
+        self.url = url
+    }
     
-    var body: some View {
+    public var body: some View {
         SafariWebView(url: url)
             .ignoresSafeArea()
     }
