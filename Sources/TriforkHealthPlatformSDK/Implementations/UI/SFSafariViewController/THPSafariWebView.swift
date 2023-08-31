@@ -8,7 +8,7 @@
 import SwiftUI
 import SafariServices
 
-struct SafariWebView: UIViewControllerRepresentable {
+struct THPSafariWebView: UIViewControllerRepresentable {
     let url: URL
     
     func makeUIViewController(context: Context) -> SFSafariViewController {
