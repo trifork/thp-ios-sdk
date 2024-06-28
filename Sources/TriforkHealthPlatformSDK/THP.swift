@@ -1,76 +1,77 @@
-import Combine
-import TIM
-import UIKit
-
+import AppAuth
 
 /// Main entrypoint for the SDK
 public final class THP {
     
+    /// The shared instance of the `TriforkHealthPlatformSDK` which should be used for all interactions.
+    public static var shared: THP = THP()
+    
+    // Singleton init
+    private init() { }
+    
     // MARK: - Private properties
-    private static var timManager: TIMManager?
+    private var timManager: TIMManager?
+    private var _auth: THPAuth?
+    private var _userStorage: THPUserStorage?
+    private var _configuration: THPConfiguration?
 }
 
-// MARK: - General
+// MARK: - Input
 
 extension THP {
-    public static func configure(configuration: THPConfiguration) {
-        timManager = TIMManager(thpConfiguration: configuration)
+    /// Configures the `TriforkHealthPlatformSDK`
+    /// The configuration needs to be called before any other functionalities can be used
+    /// You should only call this function once.
+    /// - Parameter configuration: The actual configuration
+    /// - Parameter customOIDExternalUserAgent: The actual configuration
+    public func configure(
+        configuration: THPConfiguration,
+        customOIDExternalUserAgent: OIDExternalUserAgent? = nil
+    ) {
+        timManager = TIMManagerEntity(
+            thpConfiguration: configuration,
+            customOIDExternalUserAgent: customOIDExternalUserAgent
+        )
+        _auth = THPAuthEntity(timManager: timManager!)
+        _userStorage = THPUserStorageEntity(timManager: timManager!)
+        _configuration = configuration
     }
-}
-
-// MARK: - Authentication
-
-extension THP {
-    enum Auth {
-        
-        /// Performs OAuth login or signup with OpenID Connect by presenting a `SFSafariViewController` on the `presentingViewController`
-        ///
-        /// The `refreshToken` property will be available after this, which can be used to encrypt and store it in the secure store by the `storage` namespace.
-        /// - Parameters:
-        ///   - flow: .signin or .signup, depending on which flow you want to run
-        ///   - presentingViewController: The view controller which the safari view controller should be presented on.
-        /// - Returns: The userId is returned in String format.
-        public static func performOpenIDConnectFlow(
-            flow: THPAuthenticationFlow,
-            presentingViewController: UIViewController
-        ) async throws -> String {
-            
-            guard let timManager else {
-                fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
-            }
-            var cancellable: AnyCancellable?
-            var userId: String?
-            
-            return try await withCheckedThrowingContinuation { continuation in
-                cancellable = timManager.performOpenIDConnectFlow(flow: flow, presentingViewController: presentingViewController)
-                    .sink { completion in
-                        switch completion {
-                        case .failure(let error):
-                            continuation.resume(throwing: error)
-                            
-                        case .finished:
-                            guard let userId else {
-                                continuation.resume(throwing: THPAuthError.auth(.authStateNil))
-                                return
-                            }
-
-                            // New login succeeded. Since we only support one user login we will clear all other ids on this device.
-                            THP.timManager?.clearAllUsers(except: userId)
-                            continuation.resume(returning: userId)
-                        }
-                        cancellable?.cancel()
-                    } receiveValue: { accessToken in
-                        userId = accessToken.userId
-                    }
-            }
-        }
-        
-        @discardableResult
-        public static func handleRedirect(url: URL) -> Bool {
-            guard let timManager else {
-                fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
-            }
-            return timManager.handleRedirect(url: url)
+    
+    /// Gives you access to the auth features of the SDK.
+    public var auth: THPAuth {
+        if let authInstance = _auth {
+            return authInstance
+        } else {
+            fatalError("You have to call the `configure(configuration:)` method before using `\(#function)`")
         }
     }
+    
+    /// Gives you access to the user storage features of the SDK.
+    public var userStorage: THPUserStorage {
+        if let storageInstance = _userStorage {
+            return storageInstance
+        } else {
+            fatalError("You have to call the `configure(configuration:)` method before using `\(#function)`")
+        }
+    }
+    
+    /// Allows you to read the configuration
+    public var configuration: THPConfiguration? {
+        return _configuration
+    }
+    
+//    /// Gives you access to medical data for the logged in user
+//    public var data: THPData {
+//        if let dataInstance = _data {
+//            return dataInstance
+//        } else {
+//            fatalError("You have to call the `configure(configuration:)` method before using `\(#function)`")
+//        }
+//    }
 }
+
+
+// TODO: Tasks that needs to be done
+// - Add documentation for the THPConfiguration file
+// - Add documentation in Github Readme, on how to use the SDK for logging in/signing up.
+// - Set up Apollo to prepare for handling data, when BFF is ready to deliver data instaed of view components

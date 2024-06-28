@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/trifork/TIM-iOS",
       "state" : {
-        "revision" : "bf529f7953931fa36955b185f4d4a69133619eb8",
-        "version" : "2.8.2"
+        "branch" : "niha/external-user-agent-session",
+        "revision" : "46dbc7fe3c69df02f51df577e83c33e1794a452a"
       }
     },
     {
