@@ -16,6 +16,7 @@ protocol TIMManager {
     // MARK: - Auth
     
     func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) -> AnyPublisher<JWT, THPError>
+    func performOpenIDConnectFlow(flow: THPAuthenticationFlow) -> AnyPublisher<JWT, THPError>
     @discardableResult
     func handleRedirect(url: URL) -> Bool
     func loginWithBiometricId(userId: String, storeNewRefreshToken: Bool) -> AnyPublisher<JWT, THPError>
