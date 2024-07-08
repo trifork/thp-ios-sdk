@@ -14,8 +14,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-//        .package(url: "https://github.com/trifork/TIM-iOS", from: "2.8.2"),
-        .package(url: "https://github.com/trifork/TIM-iOS", branch: "niha/external-user-agent-session"),
+        .package(url: "https://github.com/trifork/TIM-iOS", from: "2.9.0"),
         .package(url: "https://github.com/apollographql/apollo-ios.git", from: "1.0.5")
     ],
     targets: [
