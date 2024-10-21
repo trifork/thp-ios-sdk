@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/trifork/TIM-iOS",
       "state" : {
-        "revision" : "5d74120b080178f3290e5dd9b08499218f3d3b68",
-        "version" : "2.9.0"
+        "branch" : "niha/tim-encrypted-storage-update",
+        "revision" : "a5f953bbafa9c234cb751c583da7a019965ad9b9"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/trifork/TIMEncryptedStorage-iOS",
       "state" : {
-        "revision" : "466d9a9f0eba1555b0a27034f5a3b5aee837c404",
-        "version" : "2.2.1"
+        "branch" : "niha/request-retry",
+        "revision" : "55445a1d4396f36184993c52189c4035cc22b63e"
       }
     }
   ],
