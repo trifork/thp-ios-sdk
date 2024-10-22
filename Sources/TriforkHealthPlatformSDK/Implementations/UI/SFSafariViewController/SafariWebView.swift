@@ -29,3 +29,9 @@ struct SafariWebView: UIViewControllerRepresentable {
     
     func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) { }
 }
+
+extension SFSafariViewControllerDelegate {
+    public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+        NotificationCenter.default.post(name: .thpOIDCCancelNotification, object: nil, userInfo: nil)
+    }
+}
