@@ -9,7 +9,7 @@ import Foundation
 
 public extension Notification.Name {
     static let thpOIDCPresentationNotification = Notification.Name("ThpOidcPresentationNotification")
-    static let thpOIDCLoadingTokenNotification = Notification.Name("ThpOIDCLoadingTokenNotification")
+    static let thpOIDCCancelNotification = Notification.Name("ThpOIDCCancelNotification")
 }
 
 public enum THPNotificationKey {
