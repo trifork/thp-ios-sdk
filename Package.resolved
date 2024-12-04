@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/openid/AppAuth-iOS",
       "state" : {
-        "revision" : "01131d68346c8ae552961c768d583c715fbe1410",
-        "version" : "1.4.0"
+        "revision" : "2781038865a80e2c425a1da12cc1327bcd56501f",
+        "version" : "1.7.6"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/trifork/TIM-iOS",
       "state" : {
-        "revision" : "9845df79d4708803d480681d3749a12736e19dba",
-        "version" : "2.9.2"
+        "branch" : "niha/app-auth-update",
+        "revision" : "fac31602c644149dafbeda33b183cdc7da24fe8f"
       }
     },
     {
