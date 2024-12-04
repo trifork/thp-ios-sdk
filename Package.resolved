@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/trifork/TIM-iOS",
       "state" : {
-        "branch" : "niha/app-auth-update",
-        "revision" : "fac31602c644149dafbeda33b183cdc7da24fe8f"
+        "revision" : "1dae1be45a2f49da42b5a3b5f95a113c9fcf98bc",
+        "version" : "2.9.3"
       }
     },
     {
