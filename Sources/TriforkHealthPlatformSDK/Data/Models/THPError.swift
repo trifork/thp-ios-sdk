@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Nicolai Harbo on 20/06/2023.
-//
-
 import Foundation
 import TIM
 import TIMEncryptedStorage
@@ -17,9 +10,9 @@ extension TIMError {
     func asTHPError() -> THPError {
         switch self {
         case .auth(let error):
-            return .auth(error)
+            .auth(error)
         case .storage(let error):
-            return .storage(error)
+            .storage(error)
         }
     }
 }
@@ -31,9 +24,9 @@ public enum THPError: Error {
     public var errorDescription: String? {
         switch self {
         case .auth(let error):
-            return error.localizedDescription
+            error.localizedDescription
         case .storage(let error):
-            return error.localizedDescription
+            error.localizedDescription
         }
     }
 }

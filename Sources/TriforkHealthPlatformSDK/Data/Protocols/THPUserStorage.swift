@@ -1,10 +1,3 @@
-//
-//  THPUserStorageProtocol.swift
-//  
-//
-//  Created by Nicolai Harbo on 20/06/2023.
-//
-
 import Foundation
 import TIM
 

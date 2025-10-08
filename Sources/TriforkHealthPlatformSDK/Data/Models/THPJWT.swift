@@ -1,10 +1,3 @@
-//
-//  File.swift
-//
-//
-//  Created by Nicolai Harbo on 20/06/2023.
-//
-
 import Foundation
 
 /// Wrapper class for a `THPJWTString`. This class is used to guarantee that a token always is accompanied with a valid userId and expire timestamp.

@@ -1,10 +1,3 @@
-//
-//  CustomOIDExternalUserAgent.swift
-//  
-//
-//  Created by Nicolai Harbo on 28/08/2023.
-//
-
 import AppAuth
 import WebKit
 
