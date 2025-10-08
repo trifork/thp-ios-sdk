@@ -14,8 +14,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/trifork/TIM-iOS", from: "2.9.3"),
-        .package(url: "https://github.com/apollographql/apollo-ios.git", from: "1.0.5")
+        .package(url: "https://github.com/trifork/TIM-iOS", from: "2.9.3")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -23,15 +22,8 @@ let package = Package(
         .target(
             name: "TriforkHealthPlatformSDK",
             dependencies: [
-                .product(name: "TIM", package: "TIM-iOS"),
-                .product(name: "Apollo", package: "apollo-ios")
+                .product(name: "TIM", package: "TIM-iOS")
             ]
-        ),
-        .testTarget(
-            name: "TriforkHealthPlatformSDKTests",
-            dependencies: [
-                "TriforkHealthPlatformSDK"
-            ]
-        ),
+        )
     ]
 )
