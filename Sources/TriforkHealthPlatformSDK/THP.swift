@@ -1,5 +1,3 @@
-import AppAuth
-
 /// Main entrypoint for the SDK
 public final class THP {
     
