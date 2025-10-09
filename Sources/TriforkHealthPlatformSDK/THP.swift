@@ -1,5 +1,5 @@
 /// Main entrypoint for the SDK
-public final class THP {
+public final actor THP {
     
     /// The shared instance of the `TriforkHealthPlatformSDK` which should be used for all interactions.
     public static var shared: THP = THP()
@@ -33,30 +33,21 @@ public final class THP {
     
     /// Gives you access to the auth features of the SDK.
     public var auth: THPAuth {
-        if let authInstance = _auth {
-            return authInstance
+        if let _auth {
+            return _auth
         } else {
-            fatalError("You have to call the `configure(configuration:)` method before using `\(#function)`")
+            fatalError("You have to call the `configure(_ configuration:)` method before using `\(#function)`")
         }
     }
     
     /// Gives you access to the user storage features of the SDK.
     public var userStorage: THPUserStorage {
-        if let storageInstance = _userStorage {
-            return storageInstance
+        if let _userStorage {
+            return _userStorage
         } else {
-            fatalError("You have to call the `configure(configuration:)` method before using `\(#function)`")
+            fatalError("You have to call the `configure(_ configuration:)` method before using `\(#function)`")
         }
     }
-    
-//    /// Gives you access to medical data for the logged in user
-//    public var data: THPData {
-//        if let dataInstance = _data {
-//            return dataInstance
-//        } else {
-//            fatalError("You have to call the `configure(configuration:)` method before using `\(#function)`")
-//        }
-//    }
 }
 
 

@@ -16,21 +16,25 @@ public struct THPJWT {
     /// This value is optional.
     public let issuer: String?
 
-    /// Failable initializer for `JWT`.
+    /// The value of the `login_provider` parameter.
+    /// This value is optional
+    public let loginProvider: String?
+}
+
+extension THPJWT {
+    /// Failable initializer for `THPJWT`.
     /// This will only succeed if the token contains a `sub` parameter.
     public init?(token: String) {
-        self.token = token
-        if let userId = token.userId {
-            self.userId = userId
-        } else {
-            return nil
-        }
+        let parsedToken = THPJWTDecoder.decode(jwtToken: token)
+        guard let userId = parsedToken.userId else { return nil }
+        self.init(
+            token: token,
+            userId: userId,
+            expireDate: parsedToken.expireTimestamp.map { Date(timeIntervalSince1970: $0) },
+            issuer: parsedToken.issuer,
+            loginProvider: parsedToken.loginProvider
+        )
+    }
 
-        if let expireTimestamp = token.expireTimestamp {
-            self.expireDate = Date(timeIntervalSince1970: expireTimestamp)
-        } else {
-            self.expireDate = nil
-        }
-        self.issuer = token.issuer
     }
 }

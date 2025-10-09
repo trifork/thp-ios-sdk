@@ -1,27 +1,35 @@
 import Foundation
 
-private let EXPIRE_KEY: String = "exp"
-private let SUB_KEY: String = "sub"
-private let ISSUER_KEY: String = "iss"
-
 /// Type alias for tokens - just a string.
 public typealias THPJWTString = String
 
-/// Extensions for default data on a JWT.
-extension THPJWTString {
+public typealias THPJWTDecoded = [String: Any]
 
+extension THPJWTDecoded {
+    private enum Key {
+        static let expireDate: String = "exp"
+        static let userId: String = "sub"
+        static let issuer: String = "iss"
+        static let loginProvider: String = "login_provider"
+    }
+    
     /// `exp` value
     var expireTimestamp: TimeInterval? {
-        THPJWTDecoder.decode(jwtToken: self)[EXPIRE_KEY] as? TimeInterval
+        self[THPJWTDecoded.Key.expireDate] as? TimeInterval
     }
 
     /// `sub` value
     var userId: String? {
-        THPJWTDecoder.decode(jwtToken: self)[SUB_KEY] as? String
+        self[THPJWTDecoded.Key.userId] as? String
     }
 
     /// `iss` value
     var issuer: String? {
-        THPJWTDecoder.decode(jwtToken: self)[ISSUER_KEY] as? String
+        self[THPJWTDecoded.Key.issuer] as? String
+    }
+
+    /// `login_provider` value
+    var loginProvider: String? {
+        self[THPJWTDecoded.Key.loginProvider] as? String
     }
 }
