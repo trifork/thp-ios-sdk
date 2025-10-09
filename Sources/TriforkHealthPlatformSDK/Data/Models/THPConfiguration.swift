@@ -1,7 +1,7 @@
 import Foundation
 import TIM
 
-public struct THPConfiguration {
+public struct THPConfiguration: Sendable {
     public let baseAuthURL: URL
     public let scopes: [String]
     public let realm: String

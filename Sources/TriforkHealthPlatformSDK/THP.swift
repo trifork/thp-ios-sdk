@@ -11,28 +11,24 @@ public final class THP {
     private var timManager: TIMManager?
     private var _auth: THPAuth?
     private var _userStorage: THPUserStorage?
-    private var _configuration: THPConfiguration?
-}
+    
+    // MARK: - Public non-modifiable properties
+    private(set) public var configuration: THPConfiguration?
 
-// MARK: - Input
-
-extension THP {
     /// Configures the `TriforkHealthPlatformSDK`
     /// The configuration needs to be called before any other functionalities can be used
     /// You should only call this function once.
     /// - Parameter configuration: The actual configuration
-    /// - Parameter customOIDExternalUserAgent: The actual configuration
-    public func configure(
-        configuration: THPConfiguration,
-        customOIDExternalUserAgent: OIDExternalUserAgent? = nil
-    ) {
-        timManager = TIMManagerEntity(
+    public func configure(_ configuration: THPConfiguration) async {
+        let timManager = await TIMManagerEntity(
             thpConfiguration: configuration,
-            customOIDExternalUserAgent: customOIDExternalUserAgent
+            presentingViewController: .init()
         )
-        _auth = THPAuthEntity(timManager: timManager!)
-        _userStorage = THPUserStorageEntity(timManager: timManager!)
-        _configuration = configuration
+        await timManager.configureTIM(for: .signin)
+        self.configuration = configuration
+        self.timManager = timManager
+        _auth = THPAuthEntity(timManager: timManager)
+        _userStorage = THPUserStorageEntity(timManager: timManager)
     }
     
     /// Gives you access to the auth features of the SDK.
