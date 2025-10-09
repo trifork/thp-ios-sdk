@@ -1,8 +1,8 @@
 import Foundation
 
 /// Wrapper class for a `THPJWTString`. This class is used to guarantee that a token always is accompanied with a valid userId and expire timestamp.
-public struct THPJWT {
-    /// JWT token
+public struct THPJWT: Sendable {
+    /// Original JWT token, as retrieved for the identity provider.
     public let token: String
 
     /// User ID from token's `sub` parameter

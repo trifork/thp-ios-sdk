@@ -2,9 +2,9 @@
 public final actor THP {
     
     /// The shared instance of the `TriforkHealthPlatformSDK` which should be used for all interactions.
-    public static var shared: THP = THP()
+    public static let shared: THP = THP()
     
-    // Singleton init
+    /// Singleton init
     private init() { }
     
     // MARK: - Private properties
