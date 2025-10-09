@@ -1,8 +1,7 @@
 import SwiftUI
 
 public struct THPIODCSafariWebView: View {
-    
-    let url: URL
+    private let url: URL
 
     public init(url: URL) {
         self.url = url

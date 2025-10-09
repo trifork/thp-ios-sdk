@@ -22,7 +22,7 @@ struct SafariWebView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) { }
     
     class Coordinator: NSObject, SFSafariViewControllerDelegate {
-        var parent: SafariWebView
+        let parent: SafariWebView
         
         init(_ parent: SafariWebView) {
             self.parent = parent

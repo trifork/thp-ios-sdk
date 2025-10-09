@@ -105,36 +105,21 @@ extension TIMESKeyCreationResult: @unchecked @retroactive Sendable {}
 extension TIMManagerEntity{
     func configureTIM(for flow: THPAuthenticationFlow) {
         TIM.configure(
-            configuration: buildConfiguration(
-                url: thpConfiguration.baseAuthURL,
-                scopes: thpConfiguration.scopes,
+            configuration: TIMConfiguration(
+                timBaseUrl: thpConfiguration.baseAuthURL,
                 realm: thpConfiguration.realm,
                 clientId: thpConfiguration.clientId,
-                redirectURL: thpConfiguration.redirectUrl,
-                flow: flow
+                redirectUri: URL(string: thpConfiguration.redirectUrl)!,
+                scopes: thpConfiguration.scopes,
+                encryptionMethod: .aesGcm,
+                additionalParameters: [
+                    "ui_locales": Locale.applicationLocale.identifier.split(separator: "-")[0].description,
+                    "prompt": "login",
+                    thpConfiguration.loginFlowKey: flow.rawValue
+                ]
             ),
             allowReconfigure: true,
             customOIDExternalUserAgent: customOIDExternalUserAgent
-        )
-    }
-    
-    private func buildConfiguration(url: URL, scopes: [String], realm: String, clientId: String, redirectURL: String, flow: THPAuthenticationFlow) -> TIMConfiguration {
-        
-        var params: [String: String] = [
-            "ui_locales": Locale.applicationLocale.identifier.split(separator: "-")[0].description,
-            "prompt": "login"
-        ]
-
-        params[thpConfiguration.loginFlowKey] = flow.rawValue
-        
-        return TIMConfiguration(
-            timBaseUrl: url,
-            realm: realm,
-            clientId: clientId,
-            redirectUri: URL(string: redirectURL)!,
-            scopes: scopes,
-            encryptionMethod: .aesGcm,
-            additionalParameters: params
         )
     }
 }
