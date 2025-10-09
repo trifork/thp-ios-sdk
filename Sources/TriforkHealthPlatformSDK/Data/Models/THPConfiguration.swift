@@ -9,6 +9,14 @@ public struct THPConfiguration: Sendable {
     public let redirectUrl: String
     public let loginFlowKey: String
     
+    /// Default constructor
+    /// - Parameters:
+    ///   - scopes: Scopes, e.g. `["scope"]`
+    ///   - realm: Realm, e.g. `"my-test-realm"`
+    ///   - clientId: Client Id, e.g. `"my-client"`
+    ///   - redirectUrl: Redirect URL, e.g. `"my-app:/"`
+    ///   - baseAuthURL: Base base URL to authenticate, e.g. https://trifork.com
+    ///   - loginFlowKey: The client app key to identify the login flow source, e.g. `"client-flow"`
     public init(
         scopes: [String],
         realm: String,
