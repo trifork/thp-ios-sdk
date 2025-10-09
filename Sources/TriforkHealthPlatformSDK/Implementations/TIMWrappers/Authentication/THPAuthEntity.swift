@@ -1,183 +1,78 @@
 import Foundation
 import UIKit
 
-public struct THPAuthEntity {
-    
-    private let timManager: TIMManager?
+public final actor THPAuthEntity: THPAuth {
+    private let timManager: TIMManager
     
     init(timManager: TIMManager) {
         self.timManager = timManager
     }
-}
-
-extension THPAuthEntity: THPAuth {
     
     public func performOpenIDConnectFlow(
         flow: THPAuthenticationFlow,
         presentingViewController: UIViewController
     ) async throws -> String {
-        guard let timManager else {
-            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
-        }
-        var cancellable: AnyCancellable?
-        var userId: String?
-        
-        return try await withCheckedThrowingContinuation { continuation in
-            cancellable = timManager.performOpenIDConnectFlow(flow: flow, presentingViewController: presentingViewController)
-                .sink { completion in
-                    switch completion {
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-                        
-                    case .finished:
-                        guard let userId else {
-                            continuation.resume(throwing: THPError.auth(.authStateNil))
-                            return
-                        }
-                        
-                        // New login succeeded. Since we only support one user login we will clear all other ids on this device.
-                        timManager.clearAllUsers(except: userId)
-                        continuation.resume(returning: userId)
-                    }
-                    cancellable?.cancel()
-                } receiveValue: { accessToken in
-                    userId = accessToken.userId
-                }
-        }
+        try await timManager.performOpenIDConnectFlow(flow: flow, presentingViewController: presentingViewController).userId
     }
     
     public func performOpenIDConnectFlow(flow: THPAuthenticationFlow) async throws -> String {
-        guard let timManager else {
-            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
-        }
-        var cancellable: AnyCancellable?
-        var userId: String?
-
-        return try await withCheckedThrowingContinuation { continuation in
-            cancellable = timManager.performOpenIDConnectFlow(flow: flow)
-                .sink { completion in
-                    switch completion {
-                    case .failure(let error):
-                        continuation.resume(throwing: error)
-
-                    case .finished:
-                        guard let userId else {
-                            continuation.resume(throwing: THPError.auth(.authStateNil))
-                            return
-                        }
-
-                        // New login succeeded. Since we only support one user login we will clear all other ids on this device.
-                        timManager.clearAllUsers(except: userId)
-                        continuation.resume(returning: userId)
-                    }
-                    cancellable?.cancel()
-                } receiveValue: { accessToken in
-                    userId = accessToken.userId
-                }
-        }
+        try await timManager.performOpenIDConnectFlow(flow: flow).userId
     }
     
     @discardableResult
-    public func handleRedirect(url: URL) -> Bool {
-        guard let timManager else {
-            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
-        }
-        return timManager.handleRedirect(url: url)
+    public func handleRedirect(url: URL) async -> Bool {
+        await timManager.handleRedirect(url: url)
     }
     
     public func loginWithBiometricId(storeNewRefreshToken: Bool) async throws -> THPJWT {
-        guard let timManager else {
-            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
-        }
-        
-        guard let userId = timManager.userId else {
+        guard let userId = await timManager.userId else {
             fatalError("userId is missing!")
         }
         
-        var cancellable: AnyCancellable?
-        return try await withCheckedThrowingContinuation { continuation in
-            cancellable = timManager.loginWithBiometricId(userId: userId, storeNewRefreshToken: storeNewRefreshToken)
-                .mapError { $0 }
-                .sink(
-                    receiveCompletion: { completion in
-                        if case let .failure(error) = completion {
-                            continuation.resume(throwing: error)
-                        }
-                        cancellable?.cancel()
-                    }, receiveValue: { accessToken in
-                        continuation.resume(returning: THPJWT(token: accessToken.token)!)
-                    }
-                )
+        let result = try await timManager.loginWithBiometricId(userId: userId, storeNewRefreshToken: storeNewRefreshToken)
+        if let token = THPJWT(token: result.token) {
+            return token
+        } else {
+            throw THPError.auth(.failedToValidateIDToken)
         }
     }
     
     public func loginWithPassword(password: String, storeNewRefreshToken: Bool) async throws -> THPJWT {
-        guard let timManager else {
-            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
-        }
-        
-        guard let userId = timManager.userId else {
+        guard let userId = await timManager.userId else {
             fatalError("userId is missing!")
         }
         
-        var cancellable: AnyCancellable?
-        return try await withCheckedThrowingContinuation { continuation in
-            cancellable = timManager.loginWithPassword(userId: userId, password: password, storeNewRefreshToken: storeNewRefreshToken)
-                .mapError { $0 }
-                .sink(
-                    receiveCompletion: { completion in
-                        if case let .failure(error) = completion {
-                            continuation.resume(throwing: error)
-                        }
-                        cancellable?.cancel()
-                    }, receiveValue: { accessToken in
-                        continuation.resume(returning: THPJWT(token: accessToken.token)!)
-                    }
-                )
+        let result = try await timManager.loginWithPassword(userId: userId, password: password, storeNewRefreshToken: storeNewRefreshToken)
+        if let token = THPJWT(token: result.token) {
+            return token
+        } else {
+            throw THPError.auth(.failedToValidateIDToken)
         }
     }
     
     public func getAccessToken(forceRefresh: Bool = false) async throws -> THPJWT {
-        guard let timManager else {
-            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        let result = try await timManager.accessToken(forceRefresh: forceRefresh)
+        if let token = THPJWT(token: result.token) {
+            return token
+        } else {
+            throw THPError.auth(.failedToValidateIDToken)
         }
-        
-        var cancellable: AnyCancellable?
-        return try await withCheckedThrowingContinuation { continuation in
-            cancellable = timManager.accessToken(forceRefresh: forceRefresh)
-                .mapError { $0 }
-                .sink(
-                    receiveCompletion: { completion in
-                        if case let .failure(error) = completion {
-                            continuation.resume(throwing: error)
-                        }
-                        cancellable?.cancel()
-                    }, receiveValue: { accessToken in
-                        continuation.resume(returning: THPJWT(token: accessToken.token)!)
-                    }
-                )
-        }
+    }
+
+    public func logout(clearUser: Bool) async {
+        await timManager.logout(clearUser: clearUser)
     }
     
     public var refreshToken: THPJWT? {
-        guard let timManager else {
-            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        get async {
+            guard let token = await timManager.refreshToken?.token else { return nil }
+            return THPJWT(token: token)
         }
-        guard let token = timManager.refreshToken?.token else { return nil }
-        return THPJWT(token: token)
-    }
-    
-    public func logout(clearUser: Bool) {
-        guard let timManager else {
-            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
-        }
-        timManager.logout(clearUser: clearUser)
     }
     
     public var isLoggedIn: Bool {
-        guard let timManager else {
-            fatalError("You have to call the `configure(configuration:)` method before using \(#function)")
+        get async {
+            await timManager.isLoggedIn
         }
-        return timManager.isLoggedIn
     }
 }

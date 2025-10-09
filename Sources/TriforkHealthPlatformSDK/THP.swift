@@ -49,11 +49,6 @@ public final class THP {
         }
     }
     
-    /// Allows you to read the configuration
-    public var configuration: THPConfiguration? {
-        return _configuration
-    }
-    
 //    /// Gives you access to medical data for the logged in user
 //    public var data: THPData {
 //        if let dataInstance = _data {

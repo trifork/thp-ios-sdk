@@ -1,7 +1,7 @@
 import TIM
 import UIKit
 
-public protocol THPAuth {
+public protocol THPAuth: Actor {
     /// Performs OAuth login or signup with OpenID Connect by presenting a `SFSafariViewController` on the `presentingViewController`
     ///
     /// The `refreshToken` property will be available after this, which can be used to encrypt and store it in the secure store by the `storage` namespace.
@@ -22,7 +22,7 @@ public protocol THPAuth {
     /// Handles redirect from the `SFSafariViewController`. The return value determines whether the URL was handled successfully.
     /// - Parameter url: The url that was directed to the app.
     @discardableResult
-    func handleRedirect(url: URL) -> Bool
+    func handleRedirect(url: URL) async -> Bool
     
     /// Logs in using biometric login. This can only be done if the user has stored the refresh token with a password after calling `performOpenIDConnectLogin` AND enabled biometric protection for it.
     /// - Parameters:
@@ -42,11 +42,11 @@ public protocol THPAuth {
     
     /// Logs out the user of the current session, clearing the auth state with active tokens
     /// - Parameter clearUser: Clears all securely stored data
-    func logout(clearUser: Bool)
+    func logout(clearUser: Bool) async
     
     /// Gets the refresh token (JWT) from the current session if available
-    var refreshToken: THPJWT? { get }
+    var refreshToken: THPJWT? { get async }
     
     /// Indicates whether the user as a valid auth state
-    var isLoggedIn: Bool { get }
+    var isLoggedIn: Bool { get async }
 }
