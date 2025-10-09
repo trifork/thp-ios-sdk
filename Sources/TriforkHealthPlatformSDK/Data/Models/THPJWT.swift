@@ -36,5 +36,14 @@ extension THPJWT {
         )
     }
 
+    /// Returns a specific value from key-value pairs obtained after parsing the token, in case there is no public accessor for it. Returned value is automatically casted to the specified return type `Value`.
+    ///
+    /// - Parameters:
+    ///   - key: The `String` representing the key of the value we want to access
+    /// - Returns: The value in the token for the specified `key` casted as `Value`, or `nil` if the value is missing or the wrong type is requested.
+    ///
+    /// - Note: This function requires parsing the token to a `[String: Any]` instance in order to access the key-value pairs, which might be a long calculation. We strongly recommend storing the return value to avoid repeated invocations of this function.
+    public subscript<Value>(_ key: String) -> Value? {
+        THPJWTDecoder.decode(jwtToken: token)[key] as? Value
     }
 }
