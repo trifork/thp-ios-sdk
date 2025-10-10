@@ -7,6 +7,13 @@ public final actor THP {
     /// Singleton init
     private init() { }
     
+    /// Default initializer
+    /// - parameter configuration:
+    public init(configuration: THPConfiguration) {
+        self.init()
+        Task { await configure(configuration) }
+    }
+    
     // MARK: - Private properties
     private var timManager: TIMManager?
     private var _auth: THPAuth?
@@ -14,12 +21,14 @@ public final actor THP {
     
     // MARK: - Public non-modifiable properties
     private(set) public var configuration: THPConfiguration?
+    private(set) public var isConfigured: Bool = false
 
     /// Configures the `TriforkHealthPlatformSDK`
     /// The configuration needs to be called before any other functionalities can be used
     /// You should only call this function once.
     /// - Parameter configuration: The actual configuration
     public func configure(_ configuration: THPConfiguration) async {
+        isConfigured = false
         let timManager = await TIMManagerEntity(
             thpConfiguration: configuration,
             presentingViewController: .init()
@@ -29,6 +38,7 @@ public final actor THP {
         self.timManager = timManager
         _auth = THPAuthEntity(timManager: timManager)
         _userStorage = THPUserStorageEntity(timManager: timManager)
+        isConfigured = true
     }
     
     /// Gives you access to the auth features of the SDK.
@@ -49,9 +59,3 @@ public final actor THP {
         }
     }
 }
-
-
-// TODO: Tasks that needs to be done
-// - Add documentation for the THPConfiguration file
-// - Add documentation in Github Readme, on how to use the SDK for logging in/signing up.
-// - Set up Apollo to prepare for handling data, when BFF is ready to deliver data instaed of view components
