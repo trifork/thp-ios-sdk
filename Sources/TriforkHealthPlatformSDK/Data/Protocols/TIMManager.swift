@@ -1,39 +1,29 @@
-//
-//  File.swift
-//  
-//
-//  Created by Nicolai Harbo on 20/06/2023.
-//
-
-import Combine
-import Foundation
 import TIM
 import TIMEncryptedStorage
 import UIKit
 
-protocol TIMManager {
-    
+protocol TIMManager: Actor {
     // MARK: - Auth
     
-    func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) -> AnyPublisher<JWT, THPError>
-    func performOpenIDConnectFlow(flow: THPAuthenticationFlow) -> AnyPublisher<JWT, THPError>
-    @discardableResult
+    func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) async throws -> JWT
+    func performOpenIDConnectFlow(flow: THPAuthenticationFlow) async throws -> JWT
+    @discardableResult 
     func handleRedirect(url: URL) -> Bool
-    func loginWithBiometricId(userId: String, storeNewRefreshToken: Bool) -> AnyPublisher<JWT, THPError>
-    func loginWithPassword(userId: String, password: String, storeNewRefreshToken: Bool) -> AnyPublisher<JWT, THPError>
+    func loginWithBiometricId(userId: String, storeNewRefreshToken: Bool) async throws -> JWT
+    func loginWithPassword(userId: String, password: String, storeNewRefreshToken: Bool) async throws -> JWT
     func clearAllUsers(except userId: String?)
-    func accessToken(forceRefresh: Bool) -> AnyPublisher<JWT, THPError>
-    func getStoredRefreshToken(userId: String, password: String) -> AnyPublisher<JWT, THPError>
+    func accessToken(forceRefresh: Bool) async throws -> JWT
+    func getStoredRefreshToken(userId: String, password: String) async throws -> JWT
     var refreshToken: JWT? { get }
     var isLoggedIn: Bool { get }
     
     // MARK: - Storage
     
     var userId: String? { get }
-    func enableBiometricAccessForRefreshToken(password: String, userId: String) -> AnyPublisher<Void, THPError>
+    func enableBiometricAccessForRefreshToken(password: String, userId: String) async throws -> Void
     func hasBiometricAccessForRefreshToken(userId: String) -> Bool
     func disableBiometricAccessForRefreshToken(userId: String)
-    func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) -> AnyPublisher<TIMESKeyCreationResult, THPError>
+    func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) async throws -> TIMESKeyCreationResult
     
     // MARK: - Mixed (for SDK simplicity)
     

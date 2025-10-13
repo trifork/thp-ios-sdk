@@ -1,14 +1,7 @@
-//
-//  THPJWTDecoder.swift
-//
-//
-//  Created by Nicolai Harbo on 20/06/2023.
-//
-
 import Foundation
 
-final class THPJWTDecoder {
-    static func decode(jwtToken jwt: String) -> [String: Any] {
+enum THPJWTDecoder {
+    static func decode(jwtToken jwt: THPJWTString) -> THPJWTDecoded {
         let segments = jwt.components(separatedBy: ".")
         return segments.count > 2 ? decodeJWTPart(segments[1]) : [:]
     }
@@ -18,7 +11,7 @@ final class THPJWTDecoder {
             .replacingOccurrences(of: "-", with: "+")
             .replacingOccurrences(of: "_", with: "/")
 
-        let length = Double(base64.lengthOfBytes(using: String.Encoding.utf8))
+        let length = Double(base64.lengthOfBytes(using: .utf8))
         let requiredLength = 4 * ceil(length / 4.0)
         let paddingLength = requiredLength - length
         if paddingLength > 0 {
@@ -28,9 +21,11 @@ final class THPJWTDecoder {
         return Data(base64Encoded: base64, options: .ignoreUnknownCharacters)
     }
 
-    private static func decodeJWTPart(_ value: String) -> [String: Any] {
+    private static func decodeJWTPart(_ value: String) -> THPJWTDecoded {
         guard let bodyData = base64UrlDecode(value),
-              let json = try? JSONSerialization.jsonObject(with: bodyData, options: []), let payload = json as? [String: Any] else {
+              let json = try? JSONSerialization.jsonObject(with: bodyData, options: []),
+              let payload = json as? THPJWTDecoded
+        else {
             return [:]
         }
 

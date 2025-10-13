@@ -1,12 +1,5 @@
-//
-//  File.swift
-//  
-//
-//  Created by Nicolai Harbo on 31/08/2023.
-//
-
-import SwiftUI
 import SafariServices
+import SwiftUI
 
 struct SafariWebView: UIViewControllerRepresentable {
     let url: URL
@@ -29,7 +22,7 @@ struct SafariWebView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) { }
     
     class Coordinator: NSObject, SFSafariViewControllerDelegate {
-        var parent: SafariWebView
+        let parent: SafariWebView
         
         init(_ parent: SafariWebView) {
             self.parent = parent
