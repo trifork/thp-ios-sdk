@@ -27,38 +27,62 @@ public final actor TIMManagerEntity: TIMManager {
         TIM.auth.isLoggedIn
     }
     
-    func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) async throws -> JWT {
+    func performOpenIDConnectFlow(flow: THPAuthenticationFlow, presentingViewController: UIViewController) async throws(THPError) -> JWT {
         configureTIM(for: flow)
-        return try await TIM.auth.performOpenIDConnectLogin(presentingViewController: presentingViewController).value
+        do {
+            return try await TIM.auth.performOpenIDConnectLogin(presentingViewController: presentingViewController).value
+        } catch {
+            throw error.asTHPError()
+        }
     }
     
-    func performOpenIDConnectFlow(flow: THPAuthenticationFlow) async throws -> JWT {
+    func performOpenIDConnectFlow(flow: THPAuthenticationFlow) async throws(THPError) -> JWT {
         configureTIM(for: flow)
-        return try await TIM.auth.performOpenIDConnectLogin().value
+        do {
+            return try await TIM.auth.performOpenIDConnectLogin().value
+        } catch {
+            throw error.asTHPError()
+        }
     }
     
     func handleRedirect(url: URL) -> Bool {
         TIM.auth.handleRedirect(url: url)
     }
     
-    func loginWithBiometricId(userId: String, storeNewRefreshToken: Bool) async throws -> JWT {
-        try await TIM.auth.loginWithBiometricId(userId: userId, storeNewRefreshToken: storeNewRefreshToken, willBeginNetworkRequests: nil).value
+    func loginWithBiometricId(userId: String, storeNewRefreshToken: Bool) async throws(THPError) -> JWT {
+        do {
+            return try await TIM.auth.loginWithBiometricId(userId: userId, storeNewRefreshToken: storeNewRefreshToken, willBeginNetworkRequests: nil).value
+        } catch {
+            throw error.asTHPError()
+        }
     }
     
-    func loginWithPassword(userId: String, password: String, storeNewRefreshToken: Bool) async throws -> JWT {
-        try await TIM.auth.loginWithPassword(userId: userId, password: password, storeNewRefreshToken: storeNewRefreshToken).value
+    func loginWithPassword(userId: String, password: String, storeNewRefreshToken: Bool) async throws(THPError) -> JWT {
+        do {
+            return try await TIM.auth.loginWithPassword(userId: userId, password: password, storeNewRefreshToken: storeNewRefreshToken).value
+        } catch {
+            throw error.asTHPError()
+        }
     }
     
     func clearAllUsers(except userId: String?) {
         TIM.storage.clearAllUsers(exceptUserId: userId)
     }
     
-    func accessToken(forceRefresh: Bool) async throws -> JWT {
-        try await TIM.auth.accessToken(forceRefresh: forceRefresh).value
+    func accessToken(forceRefresh: Bool) async throws(THPError) -> JWT {
+        do {
+            return try await TIM.auth.accessToken(forceRefresh: forceRefresh).value
+        } catch {
+            throw error.asTHPError()
+        }
     }
     
-    func getStoredRefreshToken(userId: String, password: String) async throws -> JWT {
-        try await TIM.storage.getStoredRefreshToken(userId: userId, password: password).value
+    func getStoredRefreshToken(userId: String, password: String) async throws(THPError) -> JWT {
+        do {
+            return try await TIM.storage.getStoredRefreshToken(userId: userId, password: password).value
+        } catch {
+            throw error.asTHPError()
+        }
     }
     
     // MARK: - Storage
@@ -67,8 +91,12 @@ public final actor TIMManagerEntity: TIMManager {
         TIM.storage.availableUserIds.first
     }
     
-    func enableBiometricAccessForRefreshToken(password: String, userId: String) async throws {
-        try await TIM.storage.enableBiometricAccessForRefreshToken(password: password, userId: userId).value
+    func enableBiometricAccessForRefreshToken(password: String, userId: String) async throws(THPError) {
+        do {
+            return try await TIM.storage.enableBiometricAccessForRefreshToken(password: password, userId: userId).value
+        } catch {
+            throw error.asTHPError()
+        }
     }
     
     func hasBiometricAccessForRefreshToken(userId: String) -> Bool {
@@ -79,11 +107,15 @@ public final actor TIMManagerEntity: TIMManager {
         TIM.storage.disableBiometricAccessForRefreshToken(userId: userId)
     }
     
-    func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) async throws -> TIMESKeyCreationResult {
+    func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) async throws(THPError) -> TIMESKeyCreationResult {
         guard let timToken = JWT(token: refreshToken.token) else {
             throw THPError.auth(THPAuthError.failedToGetRefreshToken)
         }
-        return try await TIM.storage.storeRefreshToken(timToken, withNewPassword: newPassword).value
+        do {
+            return try await TIM.storage.storeRefreshToken(timToken, withNewPassword: newPassword).value
+        } catch {
+            throw error.asTHPError()
+        }
     }
     
     // MARK: - Mixed (for SDK simplicity)
