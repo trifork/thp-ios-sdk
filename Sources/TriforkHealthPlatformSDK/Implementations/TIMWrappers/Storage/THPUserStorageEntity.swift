@@ -14,7 +14,7 @@ public final actor THPUserStorageEntity: THPUserStorage {
         }
     }
     
-    public func enableBiometricAccessForRefreshToken(password: String) async throws {
+    public func enableBiometricAccessForRefreshToken(password: String) async throws(THPError) {
         guard let userId = await timManager.userId else {
             fatalError("You must have a logged in user to enable Biometrics")
         }
@@ -39,11 +39,11 @@ public final actor THPUserStorageEntity: THPUserStorage {
         await timManager.clearAllUsers(except: nil)
     }
     
-    public func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) async throws {
+    public func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) async throws(THPError) {
         _ = try await timManager.storeRefreshToken(refreshToken, withNewPassword: newPassword)
     }
     
-    public func getStoredRefreshToken(for userId: String, with password: String) async throws -> THPJWT {
+    public func getStoredRefreshToken(for userId: String, with password: String) async throws(THPError) -> THPJWT {
         let jwt = try await timManager.getStoredRefreshToken(userId: userId, password: password)
         if let token = THPJWT(token: jwt.token) {
             return token

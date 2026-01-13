@@ -9,7 +9,7 @@ public protocol THPUserStorage: Actor {
     /// - Parameters:
     ///   - password: The password that was used to store the refresh token.
     ///   - userId: The `userId` for the refresh token.
-    func enableBiometricAccessForRefreshToken(password: String) async throws
+    func enableBiometricAccessForRefreshToken(password: String) async throws(THPError)
     
     /// Checks whether the logged in user has stored a refresh token with biometric protection access.
     func hasBiometricAccessEnabled() async -> Bool
@@ -24,11 +24,11 @@ public protocol THPUserStorage: Actor {
     /// - Parameters:
     ///   - refreshToken: The refresh token.
     ///   - newPassword: The new password that needs a new encryption key.
-    func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) async throws
+    func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) async throws(THPError)
     
     /// Gets a stored refresh token for a `userId` and a `password`
     /// - Parameters:
     ///   - userId: The `userId` from the refresh token
     ///   - password: The password that was used to store it.
-    func getStoredRefreshToken(for userId: String, with password: String) async throws -> THPJWT
+    func getStoredRefreshToken(for userId: String, with password: String) async throws(THPError) -> THPJWT
 }

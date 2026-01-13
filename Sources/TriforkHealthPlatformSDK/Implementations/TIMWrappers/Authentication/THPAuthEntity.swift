@@ -11,11 +11,11 @@ public final actor THPAuthEntity: THPAuth {
     public func performOpenIDConnectFlow(
         flow: THPAuthenticationFlow,
         presentingViewController: UIViewController
-    ) async throws -> String {
+    ) async throws(THPError) -> String {
         try await timManager.performOpenIDConnectFlow(flow: flow, presentingViewController: presentingViewController).userId
     }
     
-    public func performOpenIDConnectFlow(flow: THPAuthenticationFlow) async throws -> String {
+    public func performOpenIDConnectFlow(flow: THPAuthenticationFlow) async throws(THPError) -> String {
         try await timManager.performOpenIDConnectFlow(flow: flow).userId
     }
     
@@ -24,7 +24,7 @@ public final actor THPAuthEntity: THPAuth {
         await timManager.handleRedirect(url: url)
     }
     
-    public func loginWithBiometricId(storeNewRefreshToken: Bool) async throws -> THPJWT {
+    public func loginWithBiometricId(storeNewRefreshToken: Bool) async throws(THPError) -> THPJWT {
         guard let userId = await timManager.userId else {
             fatalError("userId is missing!")
         }
@@ -37,7 +37,7 @@ public final actor THPAuthEntity: THPAuth {
         }
     }
     
-    public func loginWithPassword(password: String, storeNewRefreshToken: Bool) async throws -> THPJWT {
+    public func loginWithPassword(password: String, storeNewRefreshToken: Bool) async throws(THPError) -> THPJWT {
         guard let userId = await timManager.userId else {
             fatalError("userId is missing!")
         }
@@ -50,7 +50,7 @@ public final actor THPAuthEntity: THPAuth {
         }
     }
     
-    public func getAccessToken(forceRefresh: Bool = false) async throws -> THPJWT {
+    public func getAccessToken(forceRefresh: Bool = false) async throws(THPError) -> THPJWT {
         let result = try await timManager.accessToken(forceRefresh: forceRefresh)
         if let token = THPJWT(token: result.token) {
             return token
