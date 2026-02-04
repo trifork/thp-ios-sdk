@@ -109,7 +109,7 @@ public final actor TIMManagerEntity: TIMManager {
     
     func storeRefreshToken(_ refreshToken: THPJWT, withNewPassword newPassword: String) async throws(THPError) -> TIMESKeyCreationResult {
         guard let timToken = JWT(token: refreshToken.token) else {
-            throw THPError.auth(THPAuthError.failedToGetRefreshToken)
+            throw .auth(THPAuthError.failedToGetRefreshToken)
         }
         do {
             return try await TIM.storage.storeRefreshToken(timToken, withNewPassword: newPassword).value

@@ -48,7 +48,7 @@ public final actor THPUserStorageEntity: THPUserStorage {
         if let token = THPJWT(token: jwt.token) {
             return token
         } else {
-            throw THPError.auth(.failedToGetRefreshToken)
+            throw .auth(.failedToGetRefreshToken)
         }
     }
 }

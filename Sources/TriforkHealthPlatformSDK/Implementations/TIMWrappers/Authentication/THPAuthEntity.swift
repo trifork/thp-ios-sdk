@@ -33,7 +33,7 @@ public final actor THPAuthEntity: THPAuth {
         if let token = THPJWT(token: result.token) {
             return token
         } else {
-            throw THPError.auth(.failedToValidateIDToken)
+            throw .auth(.failedToValidateIDToken)
         }
     }
     
@@ -46,7 +46,7 @@ public final actor THPAuthEntity: THPAuth {
         if let token = THPJWT(token: result.token) {
             return token
         } else {
-            throw THPError.auth(.failedToValidateIDToken)
+            throw .auth(.failedToValidateIDToken)
         }
     }
     
@@ -55,7 +55,7 @@ public final actor THPAuthEntity: THPAuth {
         if let token = THPJWT(token: result.token) {
             return token
         } else {
-            throw THPError.auth(.failedToValidateIDToken)
+            throw .auth(.failedToValidateIDToken)
         }
     }
 
