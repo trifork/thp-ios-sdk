@@ -26,7 +26,7 @@ public final actor THPAuthEntity: THPAuth {
     
     public func loginWithBiometricId(storeNewRefreshToken: Bool) async throws(THPError) -> THPJWT {
         guard let userId = await timManager.userId else {
-            fatalError("userId is missing!")
+            throw .missingUserId("You must have a stored user to login with biometrics")
         }
         
         let result = try await timManager.loginWithBiometricId(userId: userId, storeNewRefreshToken: storeNewRefreshToken)
@@ -39,7 +39,7 @@ public final actor THPAuthEntity: THPAuth {
     
     public func loginWithPassword(password: String, storeNewRefreshToken: Bool) async throws(THPError) -> THPJWT {
         guard let userId = await timManager.userId else {
-            fatalError("userId is missing!")
+            throw .missingUserId("You must have a stored user to login with password")
         }
         
         let result = try await timManager.loginWithPassword(userId: userId, password: password, storeNewRefreshToken: storeNewRefreshToken)
