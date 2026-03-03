@@ -6,7 +6,7 @@ Trifork Health Platform iOS SDK is a Swift library wrapping [Trifork's Identity 
 
 | Version | Requirements            |
 |:--------|:------------------------|
-| 1.0.0   | Swift 6.2+<br>iOS 15.0+ |
+| 1.0.0+  | Swift 6.2+<br>iOS 15.0+ |
 
 ## Installation
 
@@ -297,12 +297,14 @@ await THP.shared.auth.logout(clearUser: true)
 
 ### Understanding the errors
 
-`THP` can throw a large set of errors, because of the different dependencies. All errors are wrapped within the `THPError` `enum`, with specific cases `auth` and `storage`, depending on the area that throws the error. The errors will contain other errors coming from the heart of the framework and there are a couple of levels in this:
+`THP` can throw a large set of errors, because of the different dependencies. All errors are wrapped within the `THPError` `enum`, with specific cases `auth` and `storage`, depending on the area that throws the error, and then two generic `missingUserId` and `unknown` cases. The errors will contain other errors coming from the heart of the framework and there are a couple of levels in this:
 
 ```swift
 enum THPError: Error {
     case auth(THPAuthError)
     case storage(THPStorageError)
+    case missingUserId(String)
+    case unknown
 }
 ```
 
@@ -351,7 +353,11 @@ Other errors should of course still be handled, but they can be handled in a mor
 
 `THP` depends on `TIM`, which in turn depends on `AppAuth` and `TIMEncryptedStorage`. In essence, `THP` wraps `TIM` usage for common use cases (see sections above), such that signing in/up and encrypted storage are easy to manage.
 
-## Breaking changes from `0.x`
+## Changes from `1.0.0` to `1.1.0`
+
+* Generic `Error` instances are now mapped to `THPError`, and all `throws` functions now throw a typed `THPError`, thus removing the need for the client app to cast the error returned.
+
+## Breaking changes from `0.x` to `1.0.0`
 
 There have been significant breaking changes in version `1.x`, mainly due to the adoption of Swift 6.2 and compliance with strict concurrency. Specifically:
 
