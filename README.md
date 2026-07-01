@@ -44,7 +44,8 @@ let config = THPConfiguration(
     clientId: "<clientId>",
     redirectUrl: URL(string:"<urlScheme>:/")!,
     baseAuthURL: URL(string: "<Base Auth URL>")!,
-    loginFlowKey: "<Client Login Flow Key>"
+    loginFlowKey: "<Client Login Flow Key>",
+    additionalParameters: ["configurationKey": "configurationValue"]
 )
 
 let thp = await THP(configuration: config)
@@ -68,7 +69,8 @@ let config = THPConfiguration(
     clientId: "<clientId>",
     redirectUrl: URL(string:"<urlScheme>:/")!,
     baseAuthURL: URL(string: "<Base Auth URL>")!,
-    loginFlowKey: "<Client Login Flow Key>"
+    loginFlowKey: "<Client Login Flow Key>",
+    additionalParameters: ["configurationKey": "configurationValue"]
 )
 
 await THP.shared.configure(config)

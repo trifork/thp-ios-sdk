@@ -144,11 +144,7 @@ extension TIMManagerEntity{
                 redirectUri: URL(string: thpConfiguration.redirectUrl)!,
                 scopes: thpConfiguration.scopes,
                 encryptionMethod: .aesGcm,
-                additionalParameters: [
-                    "ui_locales": Locale.applicationLocale.identifier.split(separator: "-")[0].description,
-                    "prompt": "login",
-                    thpConfiguration.loginFlowKey: flow.rawValue
-                ]
+                additionalParameters: thpConfiguration.additionalParameters.merging([thpConfiguration.loginFlowKey: flow.rawValue], uniquingKeysWith: { $1 })
             ),
             allowReconfigure: true,
             customOIDExternalUserAgent: customOIDExternalUserAgent
